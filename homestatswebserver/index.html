@@ -24,10 +24,15 @@
 
 
     <style>
-        .currentTemp {
+        .displayDataBigFont {
             font-size: 100pt;
             padding: 110px;
             font-weight: bold;
+        }
+
+        .displayDataBigFont div {
+            float: left;
+            padding-right: 20px;
         }
     </style>
 </head>
@@ -92,7 +97,10 @@
         </section>
         <section></section>
     </form>
-    <div id="currentTemp" class="currentTemp"></div>
+    <div class="displayDataBigFont">
+        <div id="currentTemp" class="currentTempAndHumidity"></div>
+        <div id="currentHumidity" class="currentTempAndHumidity"></div>
+    </div>
 
     <div id="chart_container">
         <div id="chart"></div>
@@ -107,12 +115,16 @@
     $.get("getData", function (data) {
         $(".result").html(data);
         // instantiate our graph!
-        seriesData = [[]];
+        seriesData = [[], []];
+        temperatureArray = [];
+        humidityArray = [];
         for (var i = 0; i < data.length; i++) {
-            seriesData.forEach(function (series) {
-                series.push({x: data[i][0], y: data[i][1]});
-            });
+            temperatureArray.push({x: data[i][0], y: data[i][1]});
+            humidityArray.push({x: data[i][0], y: data[i][2]});
         }
+        seriesData[0] = temperatureArray;
+        seriesData[1] = humidityArray;
+
         var graph = new Rickshaw.Graph({
             element: document.getElementById("chart"),
             width: 1500,
@@ -120,12 +132,17 @@
             renderer: 'line',
             stroke: true,
             min: 15,
-            max: 35,
+            max: 80,
             series: [
                 {
-                    color: "#c05020",
+                    color: "#930008",
                     data: seriesData[0],
                     name: 'Temperature'
+                },
+                {
+                    color: "#0F7A0F",
+                    data: seriesData[1],
+                    name: 'Humidity'
                 }
             ]
         });
@@ -235,13 +252,21 @@
 
 
     setInterval(function () {
-        updateTemperature()
+        updateTemperature();
+        updateHumidity();
     }, 3000);
 
     function updateTemperature() {
         $.get("getCurrentTemp", function (data) {
             $(".result").html(data);
-            $('#currentTemp').html(data + "C&deg;");
+            $('#currentTemp').html("T: " + data + "C&deg;");
+        }, "json");
+    }
+
+    function updateHumidity() {
+        $.get("getCurrentHumidity", function (data) {
+            $(".result").html(data);
+            $('#currentHumidity').html("H: " + data + "%");
         }, "json");
     }
 

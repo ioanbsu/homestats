@@ -16,6 +16,7 @@ is_real_data = len(sys.argv) > 1 and str(sys.argv[1]) == 'prod'
 if is_real_data:
     print 'Starting the app in production mode'
     import BMP085 as BMP085
+    import Adafruit_DHT
     # Create sensor instance with default I2C bus (On Raspberry Pi either 0 or
     # 1 based on the revision, on Beaglebone Black default to 1).
     bmp = BMP085.BMP085()
@@ -37,7 +38,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         elif str(s.path).startswith("/getData"):
             db = MySQLdb.connect(passwd='root', db='ivannaroom', user='root')
             cursor = db.cursor()
-            query = "SELECT UNIX_TIMESTAMP(id),temperature FROM sensor_stats where id > DATE_ADD(CURDATE(),INTERVAL -1 DAY) order by id asc "
+            query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity FROM sensor_stats where id > DATE_ADD(CURDATE(),INTERVAL -2 DAY) order by id asc "
             cursor.execute(query)
             fetchResult = cursor.fetchall()
             s.wfile.write(json.dumps(fetchResult,sort_keys=True))
@@ -46,6 +47,12 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 s.wfile.write(json.dumps(bmp.read_temperature()))
             else:
                 s.wfile.write(json.dumps("fake temp"))
+        elif str(s.path).startswith("/getCurrentHumidity"):
+            if is_real_data:
+                humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
+                s.wfile.write(json.dumps(humidity))
+            else:
+                s.wfile.write(json.dumps("fake humidity"))
 
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
