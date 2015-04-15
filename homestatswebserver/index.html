@@ -101,6 +101,9 @@
         <div id="currentTemp" class="currentTempAndHumidity"></div>
         <div id="currentHumidity" class="currentTempAndHumidity"></div>
     </div>
+    <div>
+        <div id="timeLived"></div>
+    </div>
 
     <div id="chart_container">
         <div id="chart"></div>
@@ -111,6 +114,8 @@
 </div>
 
 <script>
+
+    var birth = new Date(2015, 2, 4, 7, 58, 0, 0);
     // set up our data series with 50 random data points
     $.get("getData", function (data) {
         $(".result").html(data);
@@ -254,6 +259,7 @@
     setInterval(function () {
         updateTemperature();
         updateHumidity();
+        calculateAndDisplayAge();
     }, 3000);
 
     function updateTemperature() {
@@ -270,6 +276,15 @@
         }, "json");
     }
 
+    function calculateAndDisplayAge() {
+        var nowDate = new Date();
+        var diff = nowDate.valueOf() - birth.valueOf();
+        var days = parseInt(diff / 1000 / 60 / 60 / 24);
+        var hours = parseInt((diff - days * 1000 * 60 * 60 * 24) / 60 / 60 / 1000);
+        var minutes = parseInt((diff - days * 1000 * 60 * 60 * 24 - hours * 60 * 60 * 1000) / 1000 / 60);
+        $('#timeLived').html(days + " Days " + hours + " hours " + minutes + " minutes");
+    }
+
 </script>
 </body>
-</html> 
+</html>
