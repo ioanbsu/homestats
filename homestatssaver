@@ -9,7 +9,7 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-dir="/home/pi/homestats/homestatsdatasaver"
+dir="/home/ubuntu/homestats/homestatsdatasaver"
 cmd="python homestats_to_mysql.py prod"
 
 name=`basename $0`

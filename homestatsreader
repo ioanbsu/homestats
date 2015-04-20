@@ -8,7 +8,7 @@
 # Short-Description: Start web server to expose statistics data about sensors measurments.
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
-dir="/home/pi/homestats/homestatswebserver"
+dir="/home/ubuntu/homestats/homestatswebserver"
 cmd="python ts_data_exposer.py prod"
 
 name=`basename $0`

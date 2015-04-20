@@ -49,7 +49,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 s.wfile.write(json.dumps("fake temp"))
         elif str(s.path).startswith("/getCurrentHumidity"):
             if is_real_data:
-                humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
+                humidity, temperature = 0,0
+                # Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
                 s.wfile.write(json.dumps(humidity))
             else:
                 s.wfile.write(json.dumps("fake humidity"))

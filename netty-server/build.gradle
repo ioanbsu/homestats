@@ -1,0 +1,38 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    versions = [
+            guava   : '18.0',
+            jsr305  : 'jsr305:3.0.0',
+            logback : '1.1.2',
+            tomlette: '0.2',
+            netty   : '5.0.0.Alpha2',
+
+//                tests
+            mockito : '1.10.19',
+            junit   : '4.12'
+
+    ]
+}
+
+dependencies {
+
+    compile "io.netty:netty-codec-http:${versions.netty}",
+            "io.netty:netty-codec-http2:${versions.netty}",
+            "io.netty:netty-transport:${versions.netty}",
+            "io.netty:netty-transport-native-epoll:${versions.netty}:linux-x86_64",
+            "org.javassist:javassist:3.19.0-GA",
+            "com.google.guava:guava:${versions.guava}",
+            "com.google.code.findbugs:${versions.jsr305}",
+            "ch.qos.logback:logback-classic:${versions.logback}"
+
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

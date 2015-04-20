@@ -2,11 +2,7 @@ import time
 import sys
 
 import MySQLdb
-
 # import BMP085 as BMP085
-
-
-
 # How long to wait (in seconds) between measurements.
 FREQUENCY_SECONDS = 300
 
@@ -44,7 +40,8 @@ while True:
         temp = bmp.read_temperature()
         pressure = bmp.read_pressure()
         altitude = bmp.read_altitude()
-        humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
+        humidity, temperature = 0,0
+        # Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
     else:
         temp = 24.6
         pressure = 234.3
