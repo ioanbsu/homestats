@@ -15,7 +15,9 @@
  */
 package com.artigile.homestats;
 
+import com.artigile.homestats.sensor.BMP085AnfDht11;
 import com.artigile.homestats.sensor.HTU21F;
+import com.artigile.homestats.sensor.TempAndHumidity;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -57,11 +59,14 @@ public final class HomeStatsServer {
         EventLoopGroup workerGroup = null;
         try {
             AppMode appMode = AppMode.valueOf(argsParser.getString(APP_MODE_OPTION, "dev").toUpperCase());
-            HTU21F htu21F;
-            if (appMode == AppMode.PROD) {
-                htu21F = new HTU21F();
+            TempAndHumidity tempAndHumidity;
+            if (appMode == AppMode.HTU21F) {
+                tempAndHumidity = new HTU21F();
+            } else if (appMode == AppMode.BMP085) {
+                tempAndHumidity = new BMP085AnfDht11();
+                ((BMP085AnfDht11)tempAndHumidity).init();
             } else {
-                htu21F = null;
+                tempAndHumidity = null;
             }
             final String dbHost = argsParser.getString(DB_HOST_OPTION, "localhost");
             final String user = argsParser.getString(DB_USER_OPTION);
@@ -70,7 +75,7 @@ public final class HomeStatsServer {
 
             LOGGER.info("Connecting to {}, user {}, pwd: {}", dbHost, user, pwd);
             final DbService dbService = new DbService(dbHost, user, pwd);
-            new DataSaver(htu21F, dbService, 1000 * 60 * 5).start();
+            new DataSaver(tempAndHumidity, dbService, 1000 * 60 * 5).start();
 
 
             // Configure SSL.
@@ -90,7 +95,7 @@ public final class HomeStatsServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, htu21F));
+                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, tempAndHumidity));
 
             Channel ch = b.bind(port).sync().channel();
 

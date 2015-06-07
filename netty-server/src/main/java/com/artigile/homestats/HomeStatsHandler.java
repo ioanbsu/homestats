@@ -15,7 +15,7 @@
  */
 package com.artigile.homestats;
 
-import com.artigile.homestats.sensor.HTU21F;
+import com.artigile.homestats.sensor.TempAndHumidity;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -34,18 +34,13 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class HomeStatsHandler extends ChannelHandlerAdapter {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(HomeStatsHandler.class);
-
     private DecimalFormat decimalFormat = new DecimalFormat("###.###");
-    private final HTU21F htu21F;
+    private final TempAndHumidity tempAndHumidity;
     private final DbService dbService;
 
-    public HomeStatsHandler(final HTU21F htu21F, final DbService dbService) {
+    public HomeStatsHandler(final TempAndHumidity tempAndHumidity, final DbService dbService) {
         this.dbService = dbService;
-        this.htu21F = htu21F;
+        this.tempAndHumidity = tempAndHumidity;
     }
 
     @Override
@@ -96,9 +91,9 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
     }
 
     private byte[] getTemperature() {
-        if (htu21F != null) {
+        if (tempAndHumidity != null) {
             try {
-                return decimalFormat.format(htu21F.readTemperature()).getBytes();
+                return decimalFormat.format(tempAndHumidity.readTemperature()).getBytes();
             } catch (Exception e) {
                 return ("Failed to read temperature." + e.getMessage()).getBytes();
             }
@@ -108,9 +103,9 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
     }
 
     private byte[] getHumidity() {
-        if (htu21F != null) {
+        if (tempAndHumidity != null) {
             try {
-                return decimalFormat.format(htu21F.readHumidity()).getBytes();
+                return decimalFormat.format(tempAndHumidity.readHumidity()).getBytes();
             } catch (Exception e) {
                 return ("Failed to read humidity." + e.getMessage()).getBytes();
             }

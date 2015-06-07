@@ -11,7 +11,7 @@ import java.text.NumberFormat;
 /**
  * @author ivanbahdanau
  */
-public class HTU21F {
+public class HTU21F implements TempAndHumidity{
     public final static int HTU21DF_ADDRESS = 0x40;
     // HTU21DF Registers
     public final static int HTU21DF_READTEMP = 0xE3;
@@ -77,6 +77,7 @@ public class HTU21F {
         waitfor(15); // Wait 15ms
     }
 
+    @Override
     public float readTemperature()
             throws Exception
     {
@@ -111,6 +112,7 @@ public class HTU21F {
         return temp;
     }
 
+    @Override
     public float readHumidity()
             throws Exception
     {

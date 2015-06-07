@@ -21,7 +21,9 @@ final class ArgsParser {
 
 
     public static final Option APP_MODE_OPTION = OptionBuilder
-            .withDescription("App mode.PROD - application reads data from real sensors. DEV returns all fake data." +
+            .withDescription("App HTU21F - application reads data from real sensors(temp and humidity available)." +
+                    "BMP085 - application reads data from real sensors(temp only available)." +
+                    " DEV returns all fake data." +
                     " Default is DEV.")
             .withLongOpt("mode")
             .withArgName("MODE")

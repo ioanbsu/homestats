@@ -1,6 +1,7 @@
 package com.artigile.homestats;
 
 import com.artigile.homestats.sensor.HTU21F;
+import com.artigile.homestats.sensor.TempAndHumidity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,22 +22,22 @@ public class DataSaver implements Runnable {
     private final ScheduledExecutorService executorService;
 
     private final DbService dbService;
-    private final HTU21F htu21F;
+    private final TempAndHumidity tempAndHumidity;
     private final long period;
 
 
-    public DataSaver(final HTU21F htu21F, final DbService dbService, final long period) {
+    public DataSaver(final TempAndHumidity tempAndHumidity, final DbService dbService, final long period) {
         this.dbService = dbService;
-        this.htu21F = htu21F;
+        this.tempAndHumidity = tempAndHumidity;
         this.executorService = Executors.newScheduledThreadPool(1);
         this.period = period;
     }
 
     @Override
     public void run() {
-        if (htu21F != null) {
+        if (tempAndHumidity != null) {
             try {
-                dbService.saveTempAndHumidity(htu21F.readTemperature(), htu21F.readHumidity());
+                dbService.saveTempAndHumidity(tempAndHumidity.readTemperature(), tempAndHumidity.readHumidity());
             } catch (Exception e) {
                 LOGGER.error("Failed to read temperature AND/OR humidity", e);
             }
