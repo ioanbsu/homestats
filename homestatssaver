@@ -9,8 +9,8 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-dir="/home/ubuntu/homestats/homestatsdatasaver"
-cmd="python homestats_to_mysql.py prod"
+dir="/home/ubuntu/homestats/netty-server/build/install/netty-server/bin"
+cmd="./netty-server -m prod -d192.168.1.31 -uroot -proot"
 
 name=`basename $0`
 echo "$name"

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ivanna Room</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.5.1/rickshaw.min.css">
+    <link type="text/css" rel="stylesheet"
+          href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="http://code.shutterstock.com/rickshaw/src/css/graph.css">
+    <link rel="stylesheet" type="text/css" href="http://code.shutterstock.com/rickshaw/src/css/detail.css">
+    <link rel="stylesheet" type="text/css" href="http://code.shutterstock.com/rickshaw/src/css/legend.css">
+    <link rel="stylesheet" type="text/css" href="http://code.shutterstock.com/rickshaw/examples/css/extensions.css?v=2">
+
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.5.1/rickshaw.min.js" charset="utf-8"></script>
+    <script src="http://code.shutterstock.com/rickshaw/examples/js/extensions.js" charset="utf-8"></script>
+
+
+    <style>
+        .displayDataBigFont {
+            font-size: 100pt;
+            padding: 110px;
+            font-weight: bold;
+        }
+
+        .displayDataBigFont div {
+            float: left;
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+
+    <form id="side_panel" style="float: left">
+        <h1>Ivanna room</h1>
+        <section>
+            <div id="legend"></div>
+        </section>
+        <section>
+            <div id="renderer_form" class="toggler">
+                <input type="radio" name="renderer" id="area" value="area" checked>
+                <label for="area">area</label>
+                <input type="radio" name="renderer" id="bar" value="bar">
+                <label for="bar">bar</label>
+                <input type="radio" name="renderer" id="line" value="line">
+                <label for="line">line</label>
+                <input type="radio" name="renderer" id="scatter" value="scatterplot">
+                <label for="scatter">scatter</label>
+            </div>
+        </section>
+        <section>
+            <div id="offset_form">
+                <label for="stack">
+                    <input type="radio" name="offset" id="stack" value="zero" checked>
+                    <span>stack</span>
+                </label>
+                <label for="stream">
+                    <input type="radio" name="offset" id="stream" value="wiggle">
+                    <span>stream</span>
+                </label>
+                <label for="pct">
+                    <input type="radio" name="offset" id="pct" value="expand">
+                    <span>pct</span>
+                </label>
+                <label for="value">
+                    <input type="radio" name="offset" id="value" value="value">
+                    <span>value</span>
+                </label>
+            </div>
+            <div id="interpolation_form">
+                <label for="cardinal">
+                    <input type="radio" name="interpolation" id="cardinal" value="cardinal" checked>
+                    <span>cardinal</span>
+                </label>
+                <label for="linear">
+                    <input type="radio" name="interpolation" id="linear" value="linear">
+                    <span>linear</span>
+                </label>
+                <label for="step">
+                    <input type="radio" name="interpolation" id="step" value="step-after">
+                    <span>step</span>
+                </label>
+            </div>
+        </section>
+        <section>
+            <h6>Smoothing</h6>
+
+            <div id="smoother"></div>
+        </section>
+        <section></section>
+    </form>
+    <div class="displayDataBigFont">
+        <div id="currentTemp" class="currentTempAndHumidity"></div>
+        <div id="currentHumidity" class="currentTempAndHumidity"></div>
+    </div>
+    <div>
+        <div id="timeLived"></div>
+    </div>
+
+    <div id="chart_container">
+        <div id="chart"></div>
+        <div id="timeline"></div>
+        <div id="preview"></div>
+    </div>
+
+</div>
+
+<script>
+
+    var birth = new Date(2015, 2, 4, 7, 58, 0, 0);
+    // set up our data series with 50 random data points
+    $.get("app/getData", function (data) {
+        $(".result").html(data);
+        // instantiate our graph!
+        seriesData = [[], []];
+        temperatureArray = [];
+        humidityArray = [];
+        for (var i = 0; i < data.length; i++) {
+            temperatureArray.push({x: data[i][0], y: data[i][1]});
+            humidityArray.push({x: data[i][0], y: data[i][2]});
+        }
+        seriesData[0] = temperatureArray;
+        seriesData[1] = humidityArray;
+
+        var graph = new Rickshaw.Graph({
+            element: document.getElementById("chart"),
+            width: 1500,
+            height: 500,
+            renderer: 'line',
+            stroke: true,
+            min: 15,
+            max: 80,
+            series: [
+                {
+                    color: "#930008",
+                    data: seriesData[0],
+                    name: 'Temperature'
+                },
+                {
+                    color: "#0F7A0F",
+                    data: seriesData[1],
+                    name: 'Humidity'
+                }
+            ]
+        });
+
+        graph.render();
+
+
+        var preview = new Rickshaw.Graph.RangeSlider({
+            graph: graph,
+            element: document.getElementById('preview'),
+        });
+
+        var hoverDetail = new Rickshaw.Graph.HoverDetail({
+            graph: graph,
+            xFormatter: function (x) {
+                return new Date(x * 1000).toString();
+            }
+        });
+
+        var annotator = new Rickshaw.Graph.Annotate({
+            graph: graph,
+            element: document.getElementById('timeline')
+        });
+
+        var legend = new Rickshaw.Graph.Legend({
+            graph: graph,
+            element: document.getElementById('legend')
+
+        });
+
+        var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+            graph: graph,
+            legend: legend
+        });
+
+        var order = new Rickshaw.Graph.Behavior.Series.Order({
+            graph: graph,
+            legend: legend
+        });
+
+        var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
+            graph: graph,
+            legend: legend
+        });
+
+        var smoother = new Rickshaw.Graph.Smoother({
+            graph: graph,
+            element: document.querySelector('#smoother')
+        });
+
+        var ticksTreatment = 'glow';
+
+        var xAxis = new Rickshaw.Graph.Axis.Time({
+            graph: graph,
+            ticksTreatment: ticksTreatment,
+            timeFixture: new Rickshaw.Fixtures.Time.Local()
+        });
+
+        xAxis.render();
+
+        var yAxis = new Rickshaw.Graph.Axis.Y({
+            graph: graph,
+            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+            ticksTreatment: ticksTreatment
+        });
+
+        yAxis.render();
+
+
+        var controls = new RenderControls({
+            element: document.querySelector('form'),
+            graph: graph
+        });
+
+// add some data every so often
+
+        var messages = [
+            "Changed home page welcome message",
+            "Minified JS and CSS",
+            "Changed button color from blue to green",
+            "Refactored SQL query to use indexed columns",
+            "Added additional logging for debugging",
+            "Fixed typo",
+            "Rewrite conditional logic for clarity",
+            "Added documentation for new methods"
+        ];
+
+        function addAnnotation(force) {
+            if (messages.length > 0 && (force || Math.random() >= 0.95)) {
+                annotator.add(seriesData[0][seriesData[0].length - 1].x, messages.shift());
+//                annotator.update();
+            }
+        }
+
+        addAnnotation(true);
+
+        var previewXAxis = new Rickshaw.Graph.Axis.Time({
+            graph: preview.previews[0],
+            timeFixture: new Rickshaw.Fixtures.Time.Local(),
+            ticksTreatment: ticksTreatment
+        });
+
+        previewXAxis.render();
+
+
+    }, "json");
+
+
+    setInterval(function () {
+        updateTemperature();
+        updateHumidity();
+        calculateAndDisplayAge();
+    }, 3000);
+
+    function updateTemperature() {
+        $.get("app/getCurrentTemp", function (data) {
+            $(".result").html(data);
+            $('#currentTemp').html("T: " + data + "C&deg;");
+        }, "json");
+    }
+
+    function updateHumidity() {
+        $.get("app/getCurrentHumidity", function (data) {
+            $(".result").html(data);
+            $('#currentHumidity').html("H: " + data + "%");
+        }, "json");
+    }
+
+    function calculateAndDisplayAge() {
+        var nowDate = new Date();
+        var diff = nowDate.valueOf() - birth.valueOf();
+        var days = parseInt(diff / 1000 / 60 / 60 / 24);
+        var hours = parseInt((diff - days * 1000 * 60 * 60 * 24) / 60 / 60 / 1000);
+        var minutes = parseInt((diff - days * 1000 * 60 * 60 * 24 - hours * 60 * 60 * 1000) / 1000 / 60);
+        $('#timeLived').html(days + " Days " + hours + " hours " + minutes + " minutes");
+    }
+
+</script>
+</body>
+</html>
