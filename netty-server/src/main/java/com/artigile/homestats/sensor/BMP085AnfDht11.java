@@ -3,8 +3,13 @@ package com.artigile.homestats.sensor;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
 
 /**
  * @author ivanbahdanau
@@ -25,6 +30,16 @@ public class BMP085AnfDht11 implements TempAndHumidity{
     private int mc;
     private int md;
     private int oss;
+
+    private Date lastDhtUpdate;
+    private float lastTemp;
+    private float lastHum;
+
+    /**
+     * logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(BMP085AnfDht11.class);
+
 
     public BMP085AnfDht11() throws IOException {
         I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
@@ -86,9 +101,49 @@ public class BMP085AnfDht11 implements TempAndHumidity{
 
     @Override
     public float readHumidity() throws Exception {
+        String cmd = "sudo python /home/pi/DHTReader.py";
+        try {
+            String ret = "";
+            try {
+                LOGGER.info("Starting reading humidity");
+                String line;
+                Process p = Runtime.getRuntime().exec(cmd.split(" "));
+                p.waitFor();
+                BufferedReader input = new BufferedReader
+                        (new InputStreamReader(p.getInputStream()));
 
-
-        return 0;
+                while ((line = input.readLine()) != null) {
+                    ret += (line + '\n');
+                }
+                input.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            ret.trim();
+            if (ret.length() == 0) // Library is not present
+                throw new RuntimeException("Library not present");
+            else {
+                LOGGER.info("Message read from python: " + ret);
+                // Error reading the the sensor, maybe is not connected.
+                if (ret.contains("   ")) {
+                    // Read completed. Parse and update the values
+                    String[] vals = ret.split("   ");
+                    float t = Float.parseFloat(vals[0].trim());
+                    float h = Float.parseFloat(vals[1].trim());
+                    if ((t != lastTemp) || (h != lastHum)) {
+                        lastDhtUpdate = new Date();
+                        lastTemp = t;
+                        lastHum = h;
+                    }
+                } else {
+                    String msg = String.format("Error reading message BLABLABLA");
+                    throw new Exception(msg);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return lastHum;
     }
 
     public void startPressureRead() throws IOException {
