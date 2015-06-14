@@ -37,7 +37,7 @@
         }, 1000 * 30);
 
 
-        var chart = null;
+        var pressureChart = null;
         var options = {
             title: 'Temperature and Humidity',
             curveType: 'function',
@@ -60,10 +60,22 @@
                 1: {targetAxisIndex: 1}
             },
         };
+        var pressureOptions = {
+            title: 'Pressure',
+            curveType: 'function',
+            legend: {position: 'bottom'},
+            lineWidth: 3,
+            animation: {
+                duration: 1000,
+                easing: 'out',
+                startup: true
+            },
+        };
         google.setOnLoadCallback(drawChart);
 
         function drawChart() {
-            chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            tempAndHumidChart = new google.visualization.LineChart(document.getElementById('temp_and_humidity_chart'));
+            pressureChart = new google.visualization.LineChart(document.getElementById('pressure_chart'));
             refreshGraph();
             setInterval(function () {
                 refreshGraph();
@@ -78,10 +90,15 @@
                 temperatureArray.addColumn('string', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
                 temperatureArray.addColumn('number', 'Humidity');
+                pressureArray = new google.visualization.DataTable();
+                pressureArray.addColumn('string', 'Time');
+                pressureArray.addColumn('number', 'Pressure');
                 for (var i = 0; i < data.length; i++) {
                     temperatureArray.addRow([fromUnixTimestamp(data[i][0]), data[i][1], data[i][2],]);
+                    pressureArray.addRow([fromUnixTimestamp(data[i][0]), data[i][3]/3386.38816]);
                 }
-                chart.draw(temperatureArray, options);
+                tempAndHumidChart.draw(temperatureArray, options);
+                pressureChart.draw(pressureArray, pressureOptions);
 
 
             }, "json");
@@ -102,7 +119,7 @@
         function updatePressure() {
             $.get("app/getCurrentPressure", function (data) {
                 $(".result").html(data);
-                $('#currentPressure').html("Pressure: " + Number((parseInt(data)/3386.38816 ).toFixed(2))+ "inHg");
+                $('#currentPressure').html("P: " + Number((parseInt(data) / 3386.38816 ).toFixed(2)) + "inHg");
             }, "json");
         }
         function fromUnixTimestamp(unix_timestamp) {
@@ -124,6 +141,7 @@
         <div id="currentPressure" class="currentTempAndHumidity"></div>
     </div>
 </div>
-<div id="curve_chart" style="width: 100%; height: 500px"></div>
+<div id="temp_and_humidity_chart" style="width: 100%; height: 250px"></div>
+<div id="pressure_chart" style="width: 100%; height: 250px"></div>
 </body>
 </html>

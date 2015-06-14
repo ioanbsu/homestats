@@ -38,7 +38,7 @@ public class DbService {
     public String getSerializedStats() {
         Statement st;
         try {
-            String query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity FROM sensor_stats WHERE id > DATE_ADD(CURDATE(),INTERVAL -2 DAY) ORDER BY id ASC";
+            String query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity, pressure FROM sensor_stats WHERE id > DATE_ADD(CURDATE(),INTERVAL -2 DAY) ORDER BY id ASC";
             st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
             // iterate through the java resultset
@@ -47,6 +47,7 @@ public class DbService {
                 final String timestamp = rs.getString(1);
                 final Float temp = rs.getFloat("temperature");
                 final Float humidity = rs.getFloat("humidity");
+                final Integer pressure = rs.getInt("pressure");
 
                 responseBuilder.append("[")
                         .append(timestamp)
@@ -54,6 +55,8 @@ public class DbService {
                         .append(temp)
                         .append(", ")
                         .append(humidity)
+                        .append(", ")
+                        .append(pressure)
                         .append("], ");
 
             }
