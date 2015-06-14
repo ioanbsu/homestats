@@ -46,7 +46,16 @@ public class DataSaver implements Runnable {
 
     private int getPressure() {
         try {
-            return sensorsDataProvider.readPressure();
+            int pressure = sensorsDataProvider.readPressure();
+            int count = 0;
+            final int maxRetries = 5;
+            final int rediculouslyLowPressue = 50;
+            while (pressure < rediculouslyLowPressue && count++ < maxRetries) {
+                Thread.sleep(500);//sleep to prevent i2c channel overload
+                LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
+                pressure = sensorsDataProvider.readPressure();
+            }
+            return pressure;
         } catch (Exception e) {
             LOGGER.error("Failed to read the pressure", e);
             return 0;
