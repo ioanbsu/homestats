@@ -47,7 +47,15 @@
                 duration: 1000,
                 easing: 'out',
                 startup: true
-            }
+            },
+            vAxes: {0: {viewWindowMode:'explicit',
+                gridlines: {color: 'transparent'},
+            },
+                1: {gridlines: {color: 'transparent'}},
+            },
+            series: {0: {targetAxisIndex:0},
+                1:{targetAxisIndex:1}
+            },
         };
         google.setOnLoadCallback(drawChart);
 
