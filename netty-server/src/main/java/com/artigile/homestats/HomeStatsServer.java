@@ -17,7 +17,7 @@ package com.artigile.homestats;
 
 import com.artigile.homestats.sensor.BMP085AnfDht11;
 import com.artigile.homestats.sensor.HTU21F;
-import com.artigile.homestats.sensor.TempAndHumidity;
+import com.artigile.homestats.sensor.SensorsDataProvider;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -59,15 +59,25 @@ public final class HomeStatsServer {
         EventLoopGroup workerGroup = null;
         try {
             AppMode appMode = AppMode.valueOf(argsParser.getString(APP_MODE_OPTION, "dev").toUpperCase());
-            TempAndHumidity tempAndHumidity;
+            SensorsDataProvider sensorsDataProvider;
             if (appMode == AppMode.HTU21F) {
-                tempAndHumidity = new HTU21F();
+                sensorsDataProvider = new HTU21F();
             } else if (appMode == AppMode.BMP085) {
-                tempAndHumidity = new BMP085AnfDht11();
-                ((BMP085AnfDht11)tempAndHumidity).init();
+                sensorsDataProvider = new BMP085AnfDht11();
+                ((BMP085AnfDht11) sensorsDataProvider).init();
             } else {
-                tempAndHumidity = null;
+                sensorsDataProvider = null;
             }
+
+            final boolean printAndExit = argsParser.argumentPassed(PRINT_AND_EXIT);
+            if (printAndExit) {
+                LOGGER.info("Temperature: {}. ", sensorsDataProvider.readTemperature());
+                LOGGER.info("Humidity: {}", sensorsDataProvider.readHumidity());
+                LOGGER.info("Pressure(in Pa) {}", sensorsDataProvider.readPressure());
+                return;
+            }
+
+            System.out.println("");
             final String dbHost = argsParser.getString(DB_HOST_OPTION, "localhost");
             final String user = argsParser.getString(DB_USER_OPTION);
             final String pwd = argsParser.getString(DB_PWD_OPTION);
@@ -75,7 +85,7 @@ public final class HomeStatsServer {
 
             LOGGER.info("Connecting to {}, user {}, pwd: {}", dbHost, user, pwd);
             final DbService dbService = new DbService(dbHost, user, pwd);
-            new DataSaver(tempAndHumidity, dbService, 1000 * 60 * 5).start();
+            new DataSaver(sensorsDataProvider, dbService, 1000 * 60 * 5).start();
 
 
             // Configure SSL.
@@ -95,7 +105,7 @@ public final class HomeStatsServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, tempAndHumidity));
+                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, sensorsDataProvider));
 
             Channel ch = b.bind(port).sync().channel();
 

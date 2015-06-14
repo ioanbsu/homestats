@@ -3,7 +3,11 @@ package com.artigile.homestats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author ivanbahdanau
@@ -32,7 +36,7 @@ public class DbService {
     }
 
     public String getSerializedStats() {
-        Statement st = null;
+        Statement st;
         try {
             String query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity FROM sensor_stats WHERE id > DATE_ADD(CURDATE(),INTERVAL -2 DAY) ORDER BY id ASC";
             st = conn.createStatement();
@@ -71,15 +75,16 @@ public class DbService {
      * @param temperature temperature to save.
      * @param humidity    humidity to save.
      */
-    public void saveTempAndHumidity(float temperature, float humidity) {
+    public void saveTempAndHumidity(float temperature, float humidity, final int pressure) {
         try {
-            String query = "insert into sensor_stats (id,temperature,humidity) values(now()," + temperature + "," + humidity + ")";
+            String query = "insert into sensor_stats (id,temperature,humidity,pressure) values(now()," + temperature + "," + humidity + "," + pressure + ")";
             Statement st = conn.createStatement();
             int rowChanged = st.executeUpdate(query);
             if (rowChanged == 1) {
-                LOGGER.info("Saved, temperature: " + temperature + ", humidity: " + humidity);
+                LOGGER.info("Saved, temperature: {}, humidity: {}, pressure: {}", temperature, humidity, pressure);
             } else {
-                LOGGER.warn("No data seems to be saved to the DB. Temperature: " + temperature + ", humidity: " + humidity);
+                LOGGER.warn("No data seems to be saved to the DB. Temperature: {}, humidity: {}, pressure: {}.",
+                        temperature, humidity, pressure);
             }
             st.close();
         } catch (SQLException e) {

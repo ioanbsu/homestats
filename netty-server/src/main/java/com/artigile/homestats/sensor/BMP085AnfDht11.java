@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * @author ivanbahdanau
  */
-public class BMP085AnfDht11 implements TempAndHumidity{
+public class BMP085AnfDht11 implements SensorsDataProvider {
     private I2CDevice device;
     private int ac1;
     private int ac2;
@@ -105,7 +105,7 @@ public class BMP085AnfDht11 implements TempAndHumidity{
         try {
             String ret = "";
             try {
-                LOGGER.info("Starting reading humidity");
+                LOGGER.debug("Starting reading humidity");
                 String line;
                 Process p = Runtime.getRuntime().exec(cmd.split(" "));
                 p.waitFor();
@@ -123,7 +123,7 @@ public class BMP085AnfDht11 implements TempAndHumidity{
             if (ret.length() == 0) // Library is not present
                 throw new RuntimeException("Library not present");
             else {
-                LOGGER.info("Message read from python: " + ret);
+                LOGGER.debug("Message read from python: " + ret);
                 // Error reading the the sensor, maybe is not connected.
                 if (ret.contains("   ")) {
                     // Read completed. Parse and update the values
@@ -162,58 +162,58 @@ public class BMP085AnfDht11 implements TempAndHumidity{
     }
 
     public int calculatePressure(int up) {
-        System.out.println("up5=" + up);
-        System.out.println("bp5=" + b5);
+        LOGGER.debug("up5=" + up);
+        LOGGER.debug("bp5=" + b5);
 
         long p = 0;
         long b6 = b5 - 4000;
-        System.out.println("bp6=" + b6);
+        LOGGER.debug("bp6=" + b6);
 
         long x1 = (b2 * ((b6 * b6) >> 12)) >> 11;
-        System.out.println("x1=" + x1);
+        LOGGER.debug("x1=" + x1);
 
         long x2 = (ac2 * b6) >> 11;
-        System.out.println("x2=" + x2);
+        LOGGER.debug("x2=" + x2);
 
         long x3 = x1 + x2;
-        System.out.println("x3=" + x3);
+        LOGGER.debug("x3=" + x3);
 
         long b3 = (((ac1 * 4 + x3) << oss) + 2) >> 2;
-        System.out.println("b3=" + b3);
+        LOGGER.debug("b3=" + b3);
 
         x1 = (ac3 * b6) >> 13;
-        System.out.println("x1=" + x1);
+        LOGGER.debug("x1=" + x1);
 
         x2 = (b1 * ((b6 * b6) >> 12)) >> 16;
-        System.out.println("x3=" + x2);
+        LOGGER.debug("x3=" + x2);
 
         x3 = ((x1 + x2) + 2) >> 2;
-        System.out.println("x2=" + x3);
+        LOGGER.debug("x2=" + x3);
 
         long b4 = (ac4 * (x3 + 32768)) >> 15;
-        System.out.println("b4=" + b4);
+        LOGGER.debug("b4=" + b4);
 
         long b7 = (up - b3) * (50000 >> oss);
-        System.out.println("b7=" + b7);
+        LOGGER.debug("b7=" + b7);
 
         if (b7 < 0x80000000) {
             p = (b7 * 2) / b4;
         } else {
             p = (b7 / b4) * 2;
         }
-        System.out.println("p=" + p);
+        LOGGER.debug("p=" + p);
 
         x1 = (p >> 8) * (p >> 8);
-        System.out.println("x1=" + x1);
+        LOGGER.debug("x1=" + x1);
 
         x1 = (x1 * 3038) >> 16;
-        System.out.println("x1=" + x1);
+        LOGGER.debug("x1=" + x1);
 
         x2 = (-7357 * p) / 65536;
-        System.out.println("x2=" + x2);
+        LOGGER.debug("x2=" + x2);
 
         p = p + ((x1 + x2 + 3791) >> 4);
-        System.out.println("p=" + p);
+        LOGGER.debug("p=" + p);
 
         return (int)p;
     }

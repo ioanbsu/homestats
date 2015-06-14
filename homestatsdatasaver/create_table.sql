@@ -7,4 +7,7 @@ CREATE TABLE sensor_stats
 CREATE INDEX temperature on sensor_stats(temperature);
 CREATE INDEX humidity on sensor_stats(humidity);
 
+ALTER TABLE sensor_stats add pressure BIGINT NOT NULL DEFAULT 0;
+CREATE INDEX pressure on sensor_stats(pressure);
+
 

@@ -73,6 +73,15 @@ final class ArgsParser {
             .hasArg()
             .create("a");
 
+    /**
+     * Application http port.
+     */
+    public static final Option PRINT_AND_EXIT = OptionBuilder
+            .withDescription("Print sensors data and exit the application")
+            .withLongOpt("print")
+            .withArgName("PRINT")
+            .create("i");
+
 
     /**
      * Parsed command line options.
@@ -89,7 +98,7 @@ final class ArgsParser {
      */
     private static final Options AVAILABLE_ARGS = new Options()
             .addOption(APP_MODE_OPTION).addOption(DB_HOST_OPTION).addOption(DB_PWD_OPTION)
-            .addOption(DB_USER_OPTION).addOption(APP_PORT_OPTION);
+            .addOption(DB_USER_OPTION).addOption(APP_PORT_OPTION).addOption(PRINT_AND_EXIT);
     /**
      * Help options.
      */
@@ -147,6 +156,10 @@ final class ArgsParser {
     public String getString(final Option optionToParse, final String defaultValue) {
         String paramName = optionToParse.getLongOpt();
         return parsedParams().getOptionValue(paramName, defaultValue);
+    }
+
+    public boolean argumentPassed(final Option checkIfPassed){
+        return parsedParams().hasOption(checkIfPassed.getLongOpt());
     }
 
 

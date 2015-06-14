@@ -1,7 +1,6 @@
 package com.artigile.homestats;
 
-import com.artigile.homestats.sensor.HTU21F;
-import com.artigile.homestats.sensor.TempAndHumidity;
+import com.artigile.homestats.sensor.SensorsDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,26 +21,37 @@ public class DataSaver implements Runnable {
     private final ScheduledExecutorService executorService;
 
     private final DbService dbService;
-    private final TempAndHumidity tempAndHumidity;
+    private final SensorsDataProvider sensorsDataProvider;
     private final long period;
 
 
-    public DataSaver(final TempAndHumidity tempAndHumidity, final DbService dbService, final long period) {
+    public DataSaver(final SensorsDataProvider sensorsDataProvider, final DbService dbService, final long period) {
         this.dbService = dbService;
-        this.tempAndHumidity = tempAndHumidity;
+        this.sensorsDataProvider = sensorsDataProvider;
         this.executorService = Executors.newScheduledThreadPool(1);
         this.period = period;
     }
 
     @Override
     public void run() {
-        if (tempAndHumidity != null) {
+        if (sensorsDataProvider != null) {
             try {
-                dbService.saveTempAndHumidity(tempAndHumidity.readTemperature(), tempAndHumidity.readHumidity());
+                int pressure = getPressure();
+                dbService.saveTempAndHumidity(sensorsDataProvider.readTemperature(), sensorsDataProvider.readHumidity(), pressure);
             } catch (Exception e) {
                 LOGGER.error("Failed to read temperature AND/OR humidity", e);
             }
         }
+    }
+
+    private int getPressure() {
+        try {
+            return sensorsDataProvider.readPressure();
+        } catch (Exception e) {
+            LOGGER.error("Failed to read the pressure", e);
+            return 0;
+        }
+
     }
 
     public void start() {

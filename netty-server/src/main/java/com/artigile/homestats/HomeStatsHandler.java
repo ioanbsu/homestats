@@ -15,14 +15,16 @@
  */
 package com.artigile.homestats;
 
-import com.artigile.homestats.sensor.TempAndHumidity;
+import com.artigile.homestats.sensor.SensorsDataProvider;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderUtil;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpRequest;
 
 import java.text.DecimalFormat;
 
@@ -35,12 +37,12 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HomeStatsHandler extends ChannelHandlerAdapter {
 
     private DecimalFormat decimalFormat = new DecimalFormat("###.###");
-    private final TempAndHumidity tempAndHumidity;
+    private final SensorsDataProvider sensorsDataProvider;
     private final DbService dbService;
 
-    public HomeStatsHandler(final TempAndHumidity tempAndHumidity, final DbService dbService) {
+    public HomeStatsHandler(final SensorsDataProvider sensorsDataProvider, final DbService dbService) {
         this.dbService = dbService;
-        this.tempAndHumidity = tempAndHumidity;
+        this.sensorsDataProvider = sensorsDataProvider;
     }
 
     @Override
@@ -58,6 +60,8 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
                 responseBody = getHumidity();
             } else if (uri.startsWith("/getCurrentTemp")) {
                 responseBody = getTemperature();
+            } else if (uri.startsWith("/getCurrentPressure")) {
+                responseBody = getPressure();
             } else if (uri.startsWith("/getData")) {
                 responseBody = readDataFromDb();
             } else {
@@ -80,6 +84,7 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
         }
     }
 
+
     private byte[] readDataFromDb() {
         return dbService.getSerializedStats().getBytes();
     }
@@ -91,9 +96,9 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
     }
 
     private byte[] getTemperature() {
-        if (tempAndHumidity != null) {
+        if (sensorsDataProvider != null) {
             try {
-                return decimalFormat.format(tempAndHumidity.readTemperature()).getBytes();
+                return decimalFormat.format(sensorsDataProvider.readTemperature()).getBytes();
             } catch (Exception e) {
                 return ("Failed to read temperature." + e.getMessage()).getBytes();
             }
@@ -103,14 +108,26 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
     }
 
     private byte[] getHumidity() {
-        if (tempAndHumidity != null) {
+        if (sensorsDataProvider != null) {
             try {
-                return decimalFormat.format(tempAndHumidity.readHumidity()).getBytes();
+                return decimalFormat.format(sensorsDataProvider.readHumidity()).getBytes();
             } catch (Exception e) {
                 return ("Failed to read humidity." + e.getMessage()).getBytes();
             }
         } else {
             return "Fake humidity: 55".getBytes();
+        }
+    }
+
+    private byte[] getPressure() {
+        if (sensorsDataProvider != null) {
+            try {
+                return ("" + sensorsDataProvider.readPressure()).getBytes();
+            } catch (Exception e) {
+                return ("Failed to read pressure." + e.getMessage()).getBytes();
+            }
+        } else {
+            return "Fake pressure: 100120".getBytes();
         }
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.artigile.homestats;
 
-import com.artigile.homestats.sensor.TempAndHumidity;
+import com.artigile.homestats.sensor.SensorsDataProvider;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -26,12 +26,12 @@ public class HomeStatsServerInitializer extends ChannelInitializer<SocketChannel
 
     private final SslContext sslCtx;
     private final DbService dbService;
-    private final TempAndHumidity tempAndHumidity;
+    private final SensorsDataProvider sensorsDataProvider;
 
-    public HomeStatsServerInitializer(SslContext sslCtx, final DbService dbService, final TempAndHumidity tempAndHumidity) {
+    public HomeStatsServerInitializer(SslContext sslCtx, final DbService dbService, final SensorsDataProvider sensorsDataProvider) {
         this.sslCtx = sslCtx;
         this.dbService = dbService;
-        this.tempAndHumidity = tempAndHumidity;
+        this.sensorsDataProvider = sensorsDataProvider;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class HomeStatsServerInitializer extends ChannelInitializer<SocketChannel
             p.addLast(sslCtx.newHandler(ch.alloc()));
         }
         p.addLast(new HttpServerCodec());
-        p.addLast(new HomeStatsHandler(tempAndHumidity, dbService));
+        p.addLast(new HomeStatsHandler(sensorsDataProvider, dbService));
     }
 }

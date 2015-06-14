@@ -3,8 +3,10 @@ package com.artigile.homestats.sensor;
 /**
  * @author ivanbahdanau
  */
-public interface TempAndHumidity {
+public interface SensorsDataProvider {
     float readTemperature() throws Exception;
 
     float readHumidity() throws Exception;
+
+    int readPressure() throws Exception;
 }
