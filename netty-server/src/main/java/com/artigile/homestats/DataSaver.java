@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class DataSaver implements Runnable {
 
+    private int lastReadPressure = 0;
+
     /**
      * logger.
      */
@@ -54,6 +56,11 @@ public class DataSaver implements Runnable {
                 Thread.sleep(500);//sleep to prevent i2c channel overload
                 LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
                 pressure = sensorsDataProvider.readPressure();
+            }
+            if (pressure < rediculouslyLowPressure) {//in case retry did not help just sending ack last read pressure.
+                pressure = lastReadPressure;
+            } else {
+                lastReadPressure = pressure;// if the pressure read was good saving it.
             }
             return pressure;
         } catch (Exception e) {
