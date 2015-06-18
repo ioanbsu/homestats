@@ -61,16 +61,17 @@ public class DataSaver implements Runnable {
             if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
                 throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
             }
-            int delta = Math.abs(lastMeasured - pressure);
-            if (delta > 1000) {
-                if (pressure > lastMeasured) {
-                    pressure = pressure + delta / 10;
-                } else {
-                    pressure = pressure - delta / 10;
+            if (lastMeasured != 0) {
+                int delta = Math.abs(lastMeasured - pressure);
+                if (delta > 1000) {
+                    if (pressure > lastMeasured) {
+                        pressure = pressure + delta / 10;
+                    } else {
+                        pressure = pressure - delta / 10;
+                    }
                 }
             }
             lastMeasured = pressure;
-
             return pressure;
         } catch (Exception e) {
             LOGGER.error("Failed to read the pressure", e);
