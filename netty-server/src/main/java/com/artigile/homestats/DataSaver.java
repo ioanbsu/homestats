@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DataSaver implements Runnable {
 
+    private int lastMeasured;
     /**
      * logger.
      */
@@ -49,8 +50,8 @@ public class DataSaver implements Runnable {
             int pressure = sensorsDataProvider.readPressure();
             int count = 0;
             final int maxRetries = 5;
-            final int ridiculouslyLowPressure = 850000;
-            final int ridiculouslyHighPressure = 110000;
+            final int ridiculouslyLowPressure = 85000;
+            final int ridiculouslyHighPressure = 105000;
             while ((pressure > ridiculouslyHighPressure || pressure < ridiculouslyLowPressure)
                     && count++ < maxRetries) {
                 Thread.sleep(1000);//sleep to prevent i2c channel overload
@@ -60,6 +61,15 @@ public class DataSaver implements Runnable {
             if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
                 throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
             }
+            int delta = Math.abs(lastMeasured - pressure);
+            if (delta > 1000) {
+                if (pressure > lastMeasured) {
+                    pressure = pressure + delta / 10;
+                } else {
+                    pressure = pressure - delta / 10;
+                }
+            }
+            lastMeasured = pressure;
 
             return pressure;
         } catch (Exception e) {
