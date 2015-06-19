@@ -45,39 +45,33 @@ public class DataSaver implements Runnable {
         }
     }
 
-    private int getPressure() {
-        try {
-            int pressure = sensorsDataProvider.readPressure();
-            int count = 0;
-            final int maxRetries = 5;
-            final int ridiculouslyLowPressure = 85000;
-            final int ridiculouslyHighPressure = 105000;
-            while ((pressure > ridiculouslyHighPressure || pressure < ridiculouslyLowPressure)
-                    && count++ < maxRetries) {
-                Thread.sleep(1000);//sleep to prevent i2c channel overload
-                LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
-                pressure = sensorsDataProvider.readPressure();
-            }
-            if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
-                throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
-            }
-            if (lastMeasured != 0) {
-                int delta = Math.abs(lastMeasured - pressure);
-                if (delta > 1000) {
-                    if (pressure > lastMeasured) {
-                        pressure = pressure + delta / 10;
-                    } else {
-                        pressure = pressure - delta / 10;
-                    }
+    private int getPressure() throws Exception {
+        int pressure = sensorsDataProvider.readPressure();
+        int count = 0;
+        final int maxRetries = 5;
+        final int ridiculouslyLowPressure = 85000;
+        final int ridiculouslyHighPressure = 105000;
+        while ((pressure > ridiculouslyHighPressure || pressure < ridiculouslyLowPressure)
+                && count++ < maxRetries) {
+            Thread.sleep(1000);//sleep to prevent i2c channel overload
+            LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
+            pressure = sensorsDataProvider.readPressure();
+        }
+        if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
+            throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
+        }
+        if (lastMeasured != 0) {
+            int delta = Math.abs(lastMeasured - pressure);
+            if (delta > 1000) {
+                if (pressure > lastMeasured) {
+                    pressure = pressure + delta / 10;
+                } else {
+                    pressure = pressure - delta / 10;
                 }
             }
-            lastMeasured = pressure;
-            return pressure;
-        } catch (Exception e) {
-            LOGGER.error("Failed to read the pressure", e);
-            return 0;
         }
-
+        lastMeasured = pressure;
+        return pressure;
     }
 
     public void start() {
