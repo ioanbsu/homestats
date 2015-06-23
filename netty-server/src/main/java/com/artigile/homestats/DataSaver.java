@@ -38,9 +38,7 @@ public class DataSaver implements Runnable {
     public void run() {
         if (sensorsDataProvider != null) {
             try {
-                List<Integer> pressureList = dbService.getPressureList();
-                double mean = movingAverage(pressureList);
-                int pressure = getPressure(standardDeviation(pressureList, mean), mean);
+                int pressure = getPressure(dbService.getPressureList());
                 dbService.saveTempAndHumidity(sensorsDataProvider.readTemperature(), sensorsDataProvider.readHumidity(), pressure);
             } catch (Exception e) {
                 LOGGER.error("Failed to read temperature AND/OR humidity", e);
@@ -48,8 +46,7 @@ public class DataSaver implements Runnable {
         }
     }
 
-    private int getPressure(final double standardDeviation, final double movingAverage) throws Exception {
-        LOGGER.info("Standard deviation {}, moving average: {}", standardDeviation, movingAverage);
+    private int getPressure(final List<Integer> pressureList) throws Exception {
         int pressure = sensorsDataProvider.readPressure();
         int count = 0;
         final int maxRetries = 5;
@@ -64,6 +61,10 @@ public class DataSaver implements Runnable {
         if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
             throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
         }
+        final double movingAverage = movingAverage(pressureList);
+        final double standardDeviation = standardDeviation(pressureList, movingAverage);
+        LOGGER.info("Standard deviation {}, moving average: {}", standardDeviation, movingAverage);
+
         double delta = Math.abs(movingAverage - pressure);
         Preconditions.checkArgument(delta < standardDeviation * 2, "The calculated new pressure value is too high from" +
                 " the standard deviation. Sensor data: [" + pressure + "]");
