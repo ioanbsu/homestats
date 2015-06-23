@@ -1,5 +1,6 @@
 package com.artigile.homestats;
 
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 /**
  * @author ivanbahdanau
@@ -94,5 +96,22 @@ public class DbService {
             e.printStackTrace();
 
         }
+    }
+
+    public List<Integer> getPressureList() {
+        Statement st;
+        try {
+            String query = "SELECT pressure FROM sensor_stats ORDER BY id DESC limit 1440";
+            st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            ImmutableList.Builder<Integer> pressureListBuilder=ImmutableList.builder();
+            while (rs.next()) {
+                pressureListBuilder.add(rs.getInt("pressure"));
+            }
+            return pressureListBuilder.build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ImmutableList.of();
     }
 }

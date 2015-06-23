@@ -104,7 +104,7 @@ public final class HomeStatsServer {
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, sensorsDataProvider));
 
             Channel ch = b.bind(port).sync().channel();

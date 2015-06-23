@@ -1,9 +1,11 @@
 package com.artigile.homestats;
 
 import com.artigile.homestats.sensor.SensorsDataProvider;
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class DataSaver implements Runnable {
 
-    private int lastMeasured;
     /**
      * logger.
      */
@@ -37,7 +38,9 @@ public class DataSaver implements Runnable {
     public void run() {
         if (sensorsDataProvider != null) {
             try {
-                int pressure = getPressure();
+                List<Integer> pressureList = dbService.getPressureList();
+                double mean = movingAverage(pressureList);
+                int pressure = getPressure(standardDeviation(pressureList, mean), mean);
                 dbService.saveTempAndHumidity(sensorsDataProvider.readTemperature(), sensorsDataProvider.readHumidity(), pressure);
             } catch (Exception e) {
                 LOGGER.error("Failed to read temperature AND/OR humidity", e);
@@ -45,7 +48,8 @@ public class DataSaver implements Runnable {
         }
     }
 
-    private int getPressure() throws Exception {
+    private int getPressure(final double standardDeviation, final double movingAverage) throws Exception {
+        LOGGER.info("Standard deviation {}, moving average: {}", standardDeviation, movingAverage);
         int pressure = sensorsDataProvider.readPressure();
         int count = 0;
         final int maxRetries = 5;
@@ -60,18 +64,34 @@ public class DataSaver implements Runnable {
         if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
             throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
         }
-        if (lastMeasured != 0) {
-            int delta = Math.abs(lastMeasured - pressure);
-            if (delta > 1000) {
-                if (pressure > lastMeasured) {
-                    pressure = pressure + delta / 10;
-                } else {
-                    pressure = pressure - delta / 10;
-                }
-            }
-        }
-        lastMeasured = pressure;
+        double delta = Math.abs(movingAverage - pressure);
+        Preconditions.checkArgument(delta < standardDeviation * 2, "The calculated new pressure value is too high from" +
+                " the standard deviation. Sensor data: [" + pressure + "]");
         return pressure;
+    }
+
+    private double standardDeviation(final List<Integer> pressureList, final double mean) {
+        if (pressureList.isEmpty()) {
+            return 0;
+        }
+        double standardDeviation = 0.;
+        for (Integer pressure : pressureList) {
+            double submean = pressure - mean;
+            double squared = submean * submean;
+            standardDeviation += squared;
+        }
+        return Math.sqrt(standardDeviation / pressureList.size());
+    }
+
+    private double movingAverage(final List<Integer> pressureList) {
+        if (pressureList.isEmpty()) {
+            return 0;
+        }
+        double movingAverage = 0;
+        for (Integer pressure : pressureList) {
+            movingAverage += (double) pressure;
+        }
+        return movingAverage / pressureList.size();
     }
 
     public void start() {
