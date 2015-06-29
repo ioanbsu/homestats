@@ -71,7 +71,9 @@
             series: {
                 0: {targetAxisIndex: 0},
                 1: {targetAxisIndex: 1}
-            }
+            },
+            tooltip: {isHtml: true}
+
         };
         var pressureOptions = $.extend({
             title: 'Pressure',
@@ -102,13 +104,20 @@
                 temperatureArray = new google.visualization.DataTable();
                 temperatureArray.addColumn('date', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
                 temperatureArray.addColumn('number', 'Humidity');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
                 pressureArray = new google.visualization.DataTable();
                 pressureArray.addColumn('date', 'Time');
                 pressureArray.addColumn('number', 'Pressure');
+                pressureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
                 for (var i = 0; i < data.length; i++) {
-                    temperatureArray.addRow([new Date(data[i][0] * 1000), data[i][1], data[i][2],]);
-                    pressureArray.addRow([new Date(data[i][0] * 1000), data[i][3] / 3386.38816]);
+                    var date= new Date(data[i][0] * 1000);
+                    var temperature = data[i][1];
+                    var pressure=data[i][2];
+                    var humidity=data[i][3] / 3386.38816;
+                    temperatureArray.addRow([date,temperature,buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Pressure')]);
+                    pressureArray.addRow([date,humidity, buildTemperature(date, humidity,'Humidity')]);
                 }
                 tempAndHumidChart.draw(temperatureArray, temperatureOptions);
                 pressureChart.draw(pressureArray, pressureOptions);
@@ -142,6 +151,20 @@
             var seconds = "0" + date.getSeconds();
             return hours + ':' + minutes.substr(minutes.length - 2) + ':' + seconds.substr(seconds.length - 2);
         }
+        function buildTemperature(date, temperature,label) {
+            return '<div style="padding:5px 5px 5px 5px;">' +
+                    '<br/>' +
+                    '<table>' +
+                    '<tr>' +
+                    '<td><b>Date: </b>' + date.toLocaleDateString("EN-US")+' '+date.toLocaleTimeString("EN-US") + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><b>'+label+': </b>' + temperature + '</td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '</div>';
+        }
+
     </script>
 
 </head>

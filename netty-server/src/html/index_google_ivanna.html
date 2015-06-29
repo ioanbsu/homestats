@@ -101,7 +101,7 @@
                     var date = new Date(data[i][0] * 1000);
                     var temperature = data[i][1];
                     var pressure=data[i][2];
-                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, temperature,'Pressure')]);
+                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Pressure')]);
                 }
                 chart.draw(temperatureArray, options);
 
