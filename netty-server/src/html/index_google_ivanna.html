@@ -48,14 +48,33 @@
                 easing: 'out',
                 startup: true
             },
-            vAxes: {0: {viewWindowMode:'explicit',
-                gridlines: {color: 'transparent'},
-            },
+            vAxes: {
+                0: {
+                    viewWindowMode: 'explicit',
+                    gridlines: {color: 'transparent'},
+                },
                 1: {gridlines: {color: 'transparent'}},
             },
-            series: {0: {targetAxisIndex:0},
-                1:{targetAxisIndex:1}
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
             },
+            hAxis: {
+                gridlines: {
+                    count: -1,
+                    units: {
+                        days: {format: ["MMM dd"]},
+                        hours: {format: ["HH:mm", "ha"]},
+                    }
+                },
+                minorGridlines: {
+                    units: {
+                        hours: {format: ["hh:mm:ss a", "ha"]},
+                        minutes: {format: ["HH:mm a Z", ":mm"]}
+                    }
+                }
+            },
+            tooltip: {isHtml: true}
         };
         google.setOnLoadCallback(drawChart);
 
@@ -72,11 +91,17 @@
             $.get("app/getData", function (data) {
                 $(".result").html(data);
                 temperatureArray = new google.visualization.DataTable();
-                temperatureArray.addColumn('string', 'Time');
+                temperatureArray.addColumn('date', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
                 temperatureArray.addColumn('number', 'Humidity');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
+
                 for (var i = 0; i < data.length; i++) {
-                    temperatureArray.addRow([fromUnixTimestamp(data[i][0]), data[i][1], data[i][2],]);
+                    var date = new Date(data[i][0] * 1000);
+                    var temperature = data[i][1];
+                    var pressure=data[i][2];
+                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, temperature,'Pressure')]);
                 }
                 chart.draw(temperatureArray, options);
 
@@ -112,6 +137,20 @@
             var minutes = parseInt((diff - days * 1000 * 60 * 60 * 24 - hours * 60 * 60 * 1000) / 1000 / 60);
             $('#timeLived').html(days + " Days " + hours + " hours " + minutes + " minutes");
         }
+        function buildTemperature(date, temperature,label) {
+            return '<div style="padding:5px 5px 5px 5px;">' +
+                    '<br/>' +
+                    '<table>' +
+                        '<tr>' +
+                            '<td><b>Date: </b>' + date.toLocaleDateString("EN-US")+' '+date.toLocaleTimeString("EN-US") + '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td><b>'+label+': </b>' + temperature + '</td>' +
+                        '</tr>' +
+                    '</table>' +
+                    '</div>';
+        }
+
 
     </script>
 

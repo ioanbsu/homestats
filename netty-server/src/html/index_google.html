@@ -39,8 +39,6 @@
 
         var pressureChart = null;
         var options = {
-            title: 'Temperature and Humidity',
-            curveType: 'function',
             legend: {position: 'bottom'},
             lineWidth: 3,
             animation: {
@@ -55,22 +53,37 @@
                 },
                 1: {gridlines: {color: 'transparent'}},
             },
+            hAxis: {
+                gridlines: {
+                    count: -1,
+                    units: {
+                        days: {format: ["MMM dd"]},
+                        hours: {format: ["HH:mm", "ha"]},
+                    }
+                },
+                minorGridlines: {
+                    units: {
+                        hours: {format: ["hh:mm:ss a", "ha"]},
+                        minutes: {format: ["HH:mm a Z", ":mm"]}
+                    }
+                }
+            },
             series: {
                 0: {targetAxisIndex: 0},
                 1: {targetAxisIndex: 1}
-            },
+            }
         };
-        var pressureOptions = {
+        var pressureOptions = $.extend({
             title: 'Pressure',
-            curveType: 'function',
-            legend: {position: 'bottom'},
-            lineWidth: 3,
-            animation: {
-                duration: 1000,
-                easing: 'out',
-                startup: true
-            },
-        };
+            curveType: 'function'
+
+        }, options);
+        var temperatureOptions = $.extend({
+            title: 'Temperature and Humidity',
+            curveType: 'function'
+
+        }, options);
+
         google.setOnLoadCallback(drawChart);
 
         function drawChart() {
@@ -87,17 +100,17 @@
             $.get("app/getData", function (data) {
                 $(".result").html(data);
                 temperatureArray = new google.visualization.DataTable();
-                temperatureArray.addColumn('string', 'Time');
+                temperatureArray.addColumn('date', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
                 temperatureArray.addColumn('number', 'Humidity');
                 pressureArray = new google.visualization.DataTable();
-                pressureArray.addColumn('string', 'Time');
+                pressureArray.addColumn('date', 'Time');
                 pressureArray.addColumn('number', 'Pressure');
                 for (var i = 0; i < data.length; i++) {
-                    temperatureArray.addRow([fromUnixTimestamp(data[i][0]), data[i][1], data[i][2],]);
-                    pressureArray.addRow([fromUnixTimestamp(data[i][0]), data[i][3]/3386.38816]);
+                    temperatureArray.addRow([new Date(data[i][0] * 1000), data[i][1], data[i][2],]);
+                    pressureArray.addRow([new Date(data[i][0] * 1000), data[i][3] / 3386.38816]);
                 }
-                tempAndHumidChart.draw(temperatureArray, options);
+                tempAndHumidChart.draw(temperatureArray, temperatureOptions);
                 pressureChart.draw(pressureArray, pressureOptions);
 
 
