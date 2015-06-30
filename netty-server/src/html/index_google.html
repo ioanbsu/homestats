@@ -100,7 +100,6 @@
 
         function refreshGraph() {
             $.get("app/getData", function (data) {
-                $(".result").html(data);
                 temperatureArray = new google.visualization.DataTable();
                 temperatureArray.addColumn('date', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
@@ -116,8 +115,8 @@
                     var temperature = data[i][1];
                     var pressure=data[i][2];
                     var humidity=data[i][3] / 3386.38816;
-                    temperatureArray.addRow([date,temperature,buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Pressure')]);
-                    pressureArray.addRow([date,humidity, buildTemperature(date, humidity,'Humidity')]);
+                    temperatureArray.addRow([date,temperature,buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Humidity')]);
+                    pressureArray.addRow([date,humidity, buildTemperature(date, humidity,'Pressure')]);
                 }
                 tempAndHumidChart.draw(temperatureArray, temperatureOptions);
                 pressureChart.draw(pressureArray, pressureOptions);
@@ -128,19 +127,16 @@
 
         function updateTemperature() {
             $.get("app/getCurrentTemp", function (data) {
-                $(".result").html(data);
                 $('#currentTemp').html("T: " + data + "C&deg;");
             }, "json");
         }
         function updateHumidity() {
             $.get("app/getCurrentHumidity", function (data) {
-                $(".result").html(data);
                 $('#currentHumidity').html("H: " + data + "%");
             }, "json");
         }
         function updatePressure() {
             $.get("app/getCurrentPressure", function (data) {
-                $(".result").html(data);
                 $('#currentPressure').html("P: " + Number((parseInt(data) / 3386.38816 ).toFixed(2)) + "inHg");
             }, "json");
         }

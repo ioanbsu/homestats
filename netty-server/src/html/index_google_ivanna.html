@@ -89,7 +89,6 @@
 
         function refreshGraph() {
             $.get("app/getData", function (data) {
-                $(".result").html(data);
                 temperatureArray = new google.visualization.DataTable();
                 temperatureArray.addColumn('date', 'Time');
                 temperatureArray.addColumn('number', 'Temperature');
@@ -101,7 +100,7 @@
                     var date = new Date(data[i][0] * 1000);
                     var temperature = data[i][1];
                     var pressure=data[i][2];
-                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Pressure')]);
+                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Humidity')]);
                 }
                 chart.draw(temperatureArray, options);
 
@@ -111,13 +110,11 @@
 
         function updateTemperature() {
             $.get("app/getCurrentTemp", function (data) {
-                $(".result").html(data);
                 $('#currentTemp').html("T: " + data + "C&deg;");
             }, "json");
         }
         function updateHumidity() {
             $.get("app/getCurrentHumidity", function (data) {
-                $(".result").html(data);
                 $('#currentHumidity').html("H: " + data + "%");
             }, "json");
         }
