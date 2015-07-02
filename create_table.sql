@@ -1,3 +1,5 @@
+create database ivannaroom default charset=utf8;
+use ivannarom;
 CREATE TABLE sensor_stats
 (
   id DATETIME PRIMARY KEY NOT NULL,
