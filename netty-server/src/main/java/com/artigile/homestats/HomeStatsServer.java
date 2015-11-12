@@ -15,6 +15,13 @@
  */
 package com.artigile.homestats;
 
+import static com.artigile.homestats.ArgsParser.APP_MODE_OPTION;
+import static com.artigile.homestats.ArgsParser.APP_PORT_OPTION;
+import static com.artigile.homestats.ArgsParser.DB_HOST_OPTION;
+import static com.artigile.homestats.ArgsParser.DB_PWD_OPTION;
+import static com.artigile.homestats.ArgsParser.DB_USER_OPTION;
+import static com.artigile.homestats.ArgsParser.PRINT_AND_EXIT;
+
 import com.artigile.homestats.sensor.BMP085AnfDht11;
 import com.artigile.homestats.sensor.HTU21F;
 import com.artigile.homestats.sensor.SensorsDataProvider;
@@ -30,8 +37,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.artigile.homestats.ArgsParser.*;
 
 /**
  * An HTTP server that sends back the content of the received HTTP request
@@ -77,7 +82,6 @@ public final class HomeStatsServer {
                 return;
             }
 
-            System.out.println("");
             final String dbHost = argsParser.getString(DB_HOST_OPTION, "localhost");
             final String user = argsParser.getString(DB_USER_OPTION);
             final String pwd = argsParser.getString(DB_PWD_OPTION);

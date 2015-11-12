@@ -25,13 +25,12 @@ import io.netty.handler.ssl.SslContext;
 public class HomeStatsServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
-    private final DbService dbService;
-    private final SensorsDataProvider sensorsDataProvider;
+    private final HomeStatsHandler homeStatsHandler;
 
-    public HomeStatsServerInitializer(SslContext sslCtx, final DbService dbService, final SensorsDataProvider sensorsDataProvider) {
+    public HomeStatsServerInitializer(SslContext sslCtx, final DbService dbService,
+                                      final SensorsDataProvider sensorsDataProvider) {
         this.sslCtx = sslCtx;
-        this.dbService = dbService;
-        this.sensorsDataProvider = sensorsDataProvider;
+        homeStatsHandler = new HomeStatsHandler(sensorsDataProvider, dbService);
     }
 
     @Override
@@ -41,6 +40,6 @@ public class HomeStatsServerInitializer extends ChannelInitializer<SocketChannel
             p.addLast(sslCtx.newHandler(ch.alloc()));
         }
         p.addLast(new HttpServerCodec());
-        p.addLast(new HomeStatsHandler(sensorsDataProvider, dbService));
+        p.addLast(homeStatsHandler);
     }
 }

@@ -1,7 +1,6 @@
 package com.artigile.homestats;
 
 import com.artigile.homestats.sensor.SensorsDataProvider;
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,7 @@ public class DataSaver implements Runnable {
      * logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSaver.class);
-
     private final ScheduledExecutorService executorService;
-
     private final DbService dbService;
     private final SensorsDataProvider sensorsDataProvider;
     private final long period;
@@ -47,28 +44,45 @@ public class DataSaver implements Runnable {
     }
 
     private int getPressure(final List<Integer> pressureList) throws Exception {
-        int pressure = sensorsDataProvider.readPressure();
-        int count = 0;
-        final int maxRetries = 5;
-        final int ridiculouslyLowPressure = 85000;
-        final int ridiculouslyHighPressure = 105000;
-        while ((pressure > ridiculouslyHighPressure || pressure < ridiculouslyLowPressure)
-                && count++ < maxRetries) {
-            Thread.sleep(1000);//sleep to prevent i2c channel overload
-            LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
-            pressure = sensorsDataProvider.readPressure();
-        }
-        if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
-            throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save.");
-        }
-        final double movingAverage = movingAverage(pressureList);
-        final double standardDeviation = standardDeviation(pressureList, movingAverage);
-        LOGGER.info("Standard deviation {}, moving average: {}", standardDeviation, movingAverage);
+        try {
+            int pressure = sensorsDataProvider.readPressure();
+            int count = 0;
+            final int maxRetries = 5;
+            final int ridiculouslyLowPressure = 85000;
+            final int ridiculouslyHighPressure = 105000;
+            while ((pressure > ridiculouslyHighPressure || pressure < ridiculouslyLowPressure)
+                    && count++ < maxRetries) {
+                Thread.sleep(1000);//sleep to prevent i2c channel overload
+                LOGGER.info("Retrying to read valid pressure value.Returned too low: {}", pressure);
+                pressure = sensorsDataProvider.readPressure();
+            }
+            if (pressure < ridiculouslyLowPressure || pressure > ridiculouslyHighPressure) {//in case retry did not help just sending ack last read pressure.
+                LOGGER.warn("The pressure failed to be calculated. The ridiculously low value read. Skip save new value.");
+                if (pressureList.size() == 0) {
+                    throw new IllegalStateException("The pressure failed to be calculated." +
+                            " The ridiculously low value read. Skip save new value.");
+                }
+                pressure = pressureList.get(pressureList.size() - 1);
+            }
+            final double movingAverage = movingAverage(pressureList);
+            final double standardDeviation = standardDeviation(pressureList, movingAverage);
+            LOGGER.info("Standard deviation {}, moving average: {}", standardDeviation, movingAverage);
 
-        double delta = Math.abs(movingAverage - pressure);
-        Preconditions.checkArgument(delta < standardDeviation * 2, "The calculated new pressure value is too high from" +
-                " the standard deviation. Sensor data: [" + pressure + "]");
-        return pressure;
+            double delta = Math.abs(movingAverage - pressure);
+
+            if (delta > standardDeviation * 5) {
+                if (pressureList.size() == 0) {
+                    throw new IllegalStateException("The pressure failed to be calculated. The ridiculously low value read. Skip save new value.");
+                }
+                LOGGER.warn("The calculated new pressure value is too high from " +
+                                "the standard deviation. Sensor data: [{}]. Saving Last known good value {}", pressure,
+                        pressureList.get(0));
+                pressure = pressureList.get(0);
+            }
+            return pressure;
+        } catch (IllegalStateException e) {
+            return 0;
+        }
     }
 
     private double standardDeviation(final List<Integer> pressureList, final double mean) {
