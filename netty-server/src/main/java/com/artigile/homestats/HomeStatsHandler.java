@@ -41,10 +41,10 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
 
     private DecimalFormat decimalFormat = new DecimalFormat("###.###");
     private final SensorsDataProvider sensorsDataProvider;
-    private final DbService dbService;
+    private final DbDao dbDao;
 
-    public HomeStatsHandler(final SensorsDataProvider sensorsDataProvider, final DbService dbService) {
-        this.dbService = dbService;
+    public HomeStatsHandler(final SensorsDataProvider sensorsDataProvider, final DbDao dbDao) {
+        this.dbDao = dbDao;
         this.sensorsDataProvider = sensorsDataProvider;
     }
 
@@ -89,7 +89,7 @@ public class HomeStatsHandler extends ChannelHandlerAdapter {
 
 
     private byte[] readDataFromDb() {
-        return dbService.getSerializedStats().getBytes();
+        return dbDao.getSerializedStats().getBytes();
     }
 
     @Override

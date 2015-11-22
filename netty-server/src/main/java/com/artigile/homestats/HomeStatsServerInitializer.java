@@ -27,10 +27,10 @@ public class HomeStatsServerInitializer extends ChannelInitializer<SocketChannel
     private final SslContext sslCtx;
     private final HomeStatsHandler homeStatsHandler;
 
-    public HomeStatsServerInitializer(SslContext sslCtx, final DbService dbService,
+    public HomeStatsServerInitializer(SslContext sslCtx, final DbDao dbDao,
                                       final SensorsDataProvider sensorsDataProvider) {
         this.sslCtx = sslCtx;
-        homeStatsHandler = new HomeStatsHandler(sensorsDataProvider, dbService);
+        homeStatsHandler = new HomeStatsHandler(sensorsDataProvider, dbDao);
     }
 
     @Override

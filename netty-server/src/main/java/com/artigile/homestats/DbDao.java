@@ -14,16 +14,15 @@ import java.util.List;
 /**
  * @author ivanbahdanau
  */
-public class DbService {
+public class DbDao {
     private Connection conn;
 
     /**
      * logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DbService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbDao.class);
 
-
-    public DbService(final String dbHost, final String user, final String password) throws SQLException {
+    public DbDao(final String dbHost, final String user, final String password) throws SQLException {
         try {
             // create our mysql database connection
             String myDriver = "org.gjt.mm.mysql.Driver";
@@ -38,10 +37,9 @@ public class DbService {
     }
 
     public String getSerializedStats() {
-        Statement st;
-        try {
-            String query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity, pressure FROM sensor_stats WHERE id > DATE_ADD(CURDATE(),INTERVAL -2 DAY) ORDER BY id ASC";
-            st = conn.createStatement();
+        try (Statement st = conn.createStatement()) {
+            String query = "SELECT UNIX_TIMESTAMP(id),temperature, humidity, pressure FROM sensor_stats WHERE id > " +
+              "DATE_ADD(CURDATE(),INTERVAL -2 DAY) ORDER BY id ASC";
             ResultSet rs = st.executeQuery(query);
             // iterate through the java resultset
             StringBuilder responseBuilder = new StringBuilder();
@@ -52,14 +50,14 @@ public class DbService {
                 final Integer pressure = rs.getInt("pressure");
 
                 responseBuilder.append("[")
-                        .append(timestamp)
-                        .append(", ")
-                        .append(temp)
-                        .append(", ")
-                        .append(humidity)
-                        .append(", ")
-                        .append(pressure)
-                        .append("], ");
+                  .append(timestamp)
+                  .append(", ")
+                  .append(temp)
+                  .append(", ")
+                  .append(humidity)
+                  .append(", ")
+                  .append(pressure)
+                  .append("], ");
 
             }
             String data = responseBuilder.toString();
@@ -78,18 +76,19 @@ public class DbService {
      * saves humidity and temperature to the DB.
      *
      * @param temperature temperature to save.
-     * @param humidity    humidity to save.
+     * @param humidity humidity to save.
      */
     public void saveTempAndHumidity(float temperature, float humidity, final int pressure) {
-        try {
-            String query = "insert into sensor_stats (id,temperature,humidity,pressure) values(now()," + temperature + "," + humidity + "," + pressure + ")";
-            Statement st = conn.createStatement();
+        try (Statement st = conn.createStatement()) {
+            String query =
+              "insert into sensor_stats (id,temperature,humidity,pressure) values(now()," + temperature + "," +
+                humidity + "," + pressure + ")";
             int rowChanged = st.executeUpdate(query);
             if (rowChanged == 1) {
                 LOGGER.info("Saved, temperature: {}, humidity: {}, pressure: {}", temperature, humidity, pressure);
             } else {
                 LOGGER.warn("No data seems to be saved to the DB. Temperature: {}, humidity: {}, pressure: {}.",
-                        temperature, humidity, pressure);
+                  temperature, humidity, pressure);
             }
             st.close();
         } catch (SQLException e) {
@@ -99,12 +98,10 @@ public class DbService {
     }
 
     public List<Integer> getPressureList() {
-        Statement st;
-        try {
-            String query = "SELECT pressure FROM sensor_stats ORDER BY id DESC limit 1440";
-            st = conn.createStatement();
+        try (Statement st = conn.createStatement()) {
+            String query = "SELECT pressure FROM sensor_stats ORDER BY id DESC LIMIT 1440";
             ResultSet rs = st.executeQuery(query);
-            ImmutableList.Builder<Integer> pressureListBuilder=ImmutableList.builder();
+            ImmutableList.Builder<Integer> pressureListBuilder = ImmutableList.builder();
             while (rs.next()) {
                 pressureListBuilder.add(rs.getInt("pressure"));
             }

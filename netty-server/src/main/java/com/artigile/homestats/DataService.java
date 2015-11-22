@@ -12,20 +12,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author ivanbahdanau
  */
-public class DataSaver implements Runnable {
+public class DataService implements Runnable {
 
     /**
      * logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSaver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataService.class);
     private final ScheduledExecutorService executorService;
-    private final DbService dbService;
+    private final DbDao dbDao;
     private final SensorsDataProvider sensorsDataProvider;
     private final long period;
 
 
-    public DataSaver(final SensorsDataProvider sensorsDataProvider, final DbService dbService, final long period) {
-        this.dbService = dbService;
+    public DataService(final SensorsDataProvider sensorsDataProvider, final DbDao dbDao, final long period) {
+        this.dbDao = dbDao;
         this.sensorsDataProvider = sensorsDataProvider;
         this.executorService = Executors.newScheduledThreadPool(1);
         this.period = period;
@@ -35,8 +35,8 @@ public class DataSaver implements Runnable {
     public void run() {
         if (sensorsDataProvider != null) {
             try {
-                int pressure = getPressure(dbService.getPressureList());
-                dbService.saveTempAndHumidity(sensorsDataProvider.readTemperature(), sensorsDataProvider.readHumidity(), pressure);
+                int pressure = getPressure(dbDao.getPressureList());
+                dbDao.saveTempAndHumidity(sensorsDataProvider.readTemperature(), sensorsDataProvider.readHumidity(), pressure);
             } catch (Exception e) {
                 LOGGER.error("Failed to read temperature AND/OR humidity", e);
             }

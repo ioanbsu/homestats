@@ -88,8 +88,8 @@ public final class HomeStatsServer {
             final int port = Integer.valueOf(argsParser.getString(APP_PORT_OPTION, PORT + ""));
 
             LOGGER.info("Connecting to {}, user {}, pwd: {}", dbHost, user, pwd);
-            final DbService dbService = new DbService(dbHost, user, pwd);
-            new DataSaver(sensorsDataProvider, dbService, 1000 * 60 * 5).start();
+            final DbDao dbDao = new DbDao(dbHost, user, pwd);
+            new DataService(sensorsDataProvider, dbDao, 1000 * 60 * 5).start();
 
 
             // Configure SSL.
@@ -109,7 +109,7 @@ public final class HomeStatsServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
-                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbService, sensorsDataProvider));
+                    .childHandler(new HomeStatsServerInitializer(sslCtx, dbDao, sensorsDataProvider));
 
             Channel ch = b.bind(port).sync().channel();
 
