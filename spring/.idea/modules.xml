@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" group="config_server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" group="config_server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" group="config_server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/homestats.iml" filepath="$PROJECT_DIR$/.idea/modules/homestats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors.iml" group="room_sensors" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_main.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_main.iml" group="room_sensors" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_test.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_test.iml" group="room_sensors" />
+    </modules>
+  </component>
+</project>

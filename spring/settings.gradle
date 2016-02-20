@@ -1,0 +1,3 @@
+include 'room_sensors', 'config_server'
+rootProject.name = 'homestats'
+
