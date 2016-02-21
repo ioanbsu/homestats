@@ -23,8 +23,16 @@
       <module name="config_server_test" target="1.8" />
       <module name="config_service_main" target="1.8" />
       <module name="config_service_test" target="1.8" />
+      <module name="eureka-service_main" target="1.8" />
+      <module name="eureka-service_test" target="1.8" />
+      <module name="eurika-service_main" target="1.8" />
+      <module name="eurika-service_test" target="1.8" />
+      <module name="eurika_main" target="1.8" />
+      <module name="eurika_test" target="1.8" />
       <module name="room_sensors_main" target="1.8" />
       <module name="room_sensors_test" target="1.8" />
+      <module name="web_main" target="1.8" />
+      <module name="web_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

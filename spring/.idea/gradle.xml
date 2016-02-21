@@ -10,7 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/config_server" />
+            <option value="$PROJECT_DIR$/eureka-service" />
             <option value="$PROJECT_DIR$/room_sensors" />
+            <option value="$PROJECT_DIR$/web" />
           </set>
         </option>
       </GradleProjectSettings>

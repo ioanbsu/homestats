@@ -5,10 +5,16 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" group="config_server" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" group="config_server" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" group="config_server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service.iml" group="eureka-service" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_main.iml" group="eureka-service" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_test.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_test.iml" group="eureka-service" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/homestats.iml" filepath="$PROJECT_DIR$/.idea/modules/homestats.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors.iml" group="room_sensors" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_main.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_main.iml" group="room_sensors" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_test.iml" filepath="$PROJECT_DIR$/.idea/modules/room_sensors/room_sensors_test.iml" group="room_sensors" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web.iml" group="web" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web_main.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web_main.iml" group="web" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web_test.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web_test.iml" group="web" />
     </modules>
   </component>
 </project>
