@@ -23,6 +23,8 @@
       <module name="config_server_test" target="1.8" />
       <module name="config_service_main" target="1.8" />
       <module name="config_service_test" target="1.8" />
+      <module name="dashboard_main" target="1.8" />
+      <module name="dashboard_test" target="1.8" />
       <module name="eureka-service_main" target="1.8" />
       <module name="eureka-service_test" target="1.8" />
       <module name="eurika-service_main" target="1.8" />

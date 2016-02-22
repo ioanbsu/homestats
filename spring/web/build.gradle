@@ -33,6 +33,7 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile('org.springframework.cloud:spring-cloud-starter-hystrix')
 	compile('org.springframework.cloud:spring-cloud-starter-zipkin')
+	compile('org.springframework.cloud:spring-cloud-starter-stream-redis')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
