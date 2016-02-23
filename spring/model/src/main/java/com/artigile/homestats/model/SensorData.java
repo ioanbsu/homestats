@@ -1,6 +1,4 @@
-package com.artigile;
-
-import org.springframework.data.annotation.LastModifiedDate;
+package com.artigile.homestats.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +9,8 @@ import java.util.Date;
 @Entity
 @Table(name = "sensor_stats")
 public class SensorData {
+
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mmZ";
     @Id
     private Date id;
 
@@ -18,7 +18,7 @@ public class SensorData {
 
     private Float humidity;
 
-    private Float pressure;
+    private Integer pressure;
 
     public Date getId() {
         return id;
@@ -44,11 +44,21 @@ public class SensorData {
         this.humidity = humidity;
     }
 
-    public Float getPressure() {
+    public Integer getPressure() {
         return pressure;
     }
 
-    public void setPressure(Float pressure) {
+    public void setPressure(Integer pressure) {
         this.pressure = pressure;
+    }
+
+    @Override
+    public String toString() {
+        return "SensorData{" +
+                "id=" + id +
+                ", temperature=" + temperature +
+                ", humidity=" + humidity +
+                ", pressure=" + pressure +
+                '}';
     }
 }

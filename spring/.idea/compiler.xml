@@ -31,8 +31,12 @@
       <module name="eurika-service_test" target="1.8" />
       <module name="eurika_main" target="1.8" />
       <module name="eurika_test" target="1.8" />
+      <module name="model_main" target="1.8" />
+      <module name="model_test" target="1.8" />
       <module name="room_sensors_main" target="1.8" />
       <module name="room_sensors_test" target="1.8" />
+      <module name="sensors_data_provider_main" target="1.8" />
+      <module name="sensors_data_provider_test" target="1.8" />
       <module name="web_main" target="1.8" />
       <module name="web_test" target="1.8" />
     </bytecodeTargetLevel>

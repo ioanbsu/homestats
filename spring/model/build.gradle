@@ -15,7 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'spring-boot' 
 
 jar {
-	baseName = 'homestats'
+	baseName = 'model'
 	version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -29,18 +29,9 @@ repositories {
 
 
 dependencies {
-	compile project(":model")
-	compile project(":sensors_data_provider")
-	compile('org.springframework.cloud:spring-cloud-starter-config')
-	compile('org.springframework.cloud:spring-cloud-starter-zipkin')
-	compile('org.springframework.cloud:spring-cloud-starter-eureka')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-//	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile 'org.springframework.data:spring-data-rest-hal-browser'
-	runtime('mysql:mysql-connector-java')
-	testCompile('org.springframework.boot:spring-boot-starter-test') 
+
+	compile('org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final')
+
 }
 
 dependencyManagement {

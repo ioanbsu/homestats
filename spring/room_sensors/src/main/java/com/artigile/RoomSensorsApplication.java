@@ -1,26 +1,33 @@
 package com.artigile;
 
+import com.artigile.homestats.model.SensorData;
+import com.artigile.homestats.sensor.BMP085AnfDht11;
+import com.artigile.homestats.sensor.DummySensor;
+import com.artigile.homestats.sensor.HTU21F;
+import com.artigile.homestats.sensor.SensorsDataProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
-import org.springframework.integration.annotation.IntegrationComponentScan;
-import org.springframework.integration.annotation.MessageEndpoint;
-import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Collection;
+import java.util.Date;
+
 @EnableDiscoveryClient
-@EnableBinding(Sink.class)
-@IntegrationComponentScan
 @SpringBootApplication
 public class RoomSensorsApplication {
 
@@ -36,11 +43,27 @@ public class RoomSensorsApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(final SensorRepository sensorRepository) {
-        return strings -> {
-            sensorRepository.findAll();
-        };
+    @Profile("default")
+    public SensorsDataProvider dummyDataProvider() {
+        return new DummySensor();
     }
+
+    @Bean
+    @Profile("htu21f")
+    public SensorsDataProvider htu21DataProvider() {
+        return new HTU21F();
+    }
+
+    @Bean
+    @Profile("bmp085anfdht11")
+    public SensorsDataProvider bmp085DataProvider() {
+        try {
+            return new BMP085AnfDht11();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(RoomSensorsApplication.class, args);
@@ -49,24 +72,25 @@ public class RoomSensorsApplication {
 
 }
 
-@MessageEndpoint
-class TestProcessor {
-    @ServiceActivator(inputChannel = Sink.INPUT)
-    public void acceptCall(String n) {
-        System.out.println(n);
-    }
-}
-
 @RefreshScope
 @RestController
 class MsgRestController {
+    @Autowired
+    private SensorRepository sensorRepository;
+
 
     @Value("${message}")
     private String msg;
 
-    @RequestMapping("/message")
-    String message() {
-        return this.msg;
+    @RequestMapping("/sensors")
+    Collection<SensorData> message(@RequestParam("startDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date startDate,
+                                   @RequestParam("endDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date endDate) {
+        return sensorRepository.findById(startDate, endDate);
+    }
+
+    @RequestMapping("/recentSensors")
+    Collection<SensorData> message() {
+        return sensorRepository.findById(Date.from(LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC)), new Date());
     }
 
 
