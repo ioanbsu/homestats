@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.springframework.cloud:spring-cloud-config-server:1.1.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-config-server/1.1.0.BUILD-SNAPSHOT/feeafdbadcc098e05ffe9599ba9ab479282d21ac/spring-cloud-config-server-1.1.0.BUILD-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-config-server/1.1.0.BUILD-SNAPSHOT/873ff45680e949c929221f4f9843ca99b3f75628/spring-cloud-config-server-1.1.0.BUILD-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-config-server/1.1.0.BUILD-SNAPSHOT/6489af2d1a3e8347793cd2de46faf90e5d02c083/spring-cloud-config-server-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-config-server/1.1.0.BUILD-SNAPSHOT/20ae0db0fa97909d6bb3c6e7a5989b5b48b1329b/spring-cloud-config-server-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

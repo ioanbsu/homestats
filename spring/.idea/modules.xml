@@ -5,13 +5,13 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server.iml" group="config_server" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_main.iml" group="config_server" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/config_server/config_server_test.iml" group="config_server" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dashboard/dashboard.iml" filepath="$PROJECT_DIR$/.idea/modules/dashboard/dashboard.iml" group="dashboard" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dashboard/dashboard_main.iml" filepath="$PROJECT_DIR$/.idea/modules/dashboard/dashboard_main.iml" group="dashboard" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dashboard/dashboard_test.iml" filepath="$PROJECT_DIR$/.idea/modules/dashboard/dashboard_test.iml" group="dashboard" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service.iml" group="eureka-service" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_main.iml" group="eureka-service" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_test.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-service/eureka-service_test.iml" group="eureka-service" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/homestats.iml" filepath="$PROJECT_DIR$/.idea/modules/homestats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard.iml" filepath="$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard.iml" group="hystrix_dashboard" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard_main.iml" filepath="$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard_main.iml" group="hystrix_dashboard" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard_test.iml" filepath="$PROJECT_DIR$/.idea/modules/hystrix_dashboard/hystrix_dashboard_test.iml" group="hystrix_dashboard" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model/model.iml" filepath="$PROJECT_DIR$/.idea/modules/model/model.iml" group="model" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model/model_main.iml" filepath="$PROJECT_DIR$/.idea/modules/model/model_main.iml" group="model" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/model/model_test.iml" filepath="$PROJECT_DIR$/.idea/modules/model/model_test.iml" group="model" />

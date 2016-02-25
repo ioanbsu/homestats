@@ -74,18 +74,48 @@ public class RoomSensorsApplication {
 
 @RefreshScope
 @RestController
-class MsgRestController {
+class SensorsRestController {
+
     @Autowired
     private SensorRepository sensorRepository;
 
+    @Autowired
+    private SensorsDataProvider sensorsDataProvider;
 
     @Value("${message}")
     private String msg;
 
     @RequestMapping("/sensors")
-    Collection<SensorData> message(@RequestParam("startDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date startDate,
-                                   @RequestParam("endDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date endDate) {
+    Collection<SensorData> getSensoersDataForDates(@RequestParam("startDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date startDate,
+                                                   @RequestParam("endDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date endDate) {
         return sensorRepository.findById(startDate, endDate);
+    }
+
+    @RequestMapping("/currentTemp")
+    Float getCurrentTemp() {
+        try {
+            return sensorsDataProvider.readTemperature();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @RequestMapping("/currentHumidity")
+    Float getCurrentHumidity() {
+        try {
+            return sensorsDataProvider.readHumidity();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @RequestMapping("/currentPressure")
+    Integer getCurrentPressure() {
+        try {
+            return sensorsDataProvider.readPressure();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @RequestMapping("/recentSensors")

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ivanna Room</title>
+
+    <style>
+        .displayDataBigFont {
+            font-size: 100pt;
+            padding: 110px;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+
+        .displayDataBigFont div {
+            float: left;
+            padding-right: 20px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="https://www.google.com/jsapi?autoload={
+            'modules':[{
+              'name':'visualization',
+              'version':'1.1',
+              'packages':['corechart']
+            }]
+          }"></script>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var birth = new Date(2015, 2, 4, 7, 58, 0, 0);
+        updateTemperature();
+        calculateAndDisplayAge();
+        setInterval(function () {
+            updateTemperature();
+            updateHumidity();
+            calculateAndDisplayAge();
+        }, 1000 * 2);
+
+
+        var chart = null;
+        var options = {
+            title: 'Temperature and Humidity',
+            curveType: 'function',
+            legend: {position: 'bottom'},
+            lineWidth: 3,
+            animation: {
+                duration: 1000,
+                easing: 'out',
+                startup: true
+            },
+            vAxes: {
+                0: {
+                    viewWindowMode: 'explicit',
+                    gridlines: {color: 'transparent'},
+                },
+                1: {gridlines: {color: 'transparent'}},
+            },
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                gridlines: {
+                    count: -1,
+                    units: {
+                        days: {format: ["MMM dd"]},
+                        hours: {format: ["HH:mm", "ha"]},
+                    }
+                },
+                minorGridlines: {
+                    units: {
+                        hours: {format: ["hh:mm:ss a", "ha"]},
+                        minutes: {format: ["HH:mm a Z", ":mm"]}
+                    }
+                }
+            },
+            tooltip: {isHtml: true}
+        };
+        google.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            refreshGraph();
+            setInterval(function () {
+                refreshGraph();
+            }, 1000 * 2 * 60);
+        }
+
+
+        function refreshGraph() {
+            $.get("sensors/lastN", function (data) {
+                temperatureArray = new google.visualization.DataTable();
+                temperatureArray.addColumn('date', 'Time');
+                temperatureArray.addColumn('number', 'Temperature');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
+                temperatureArray.addColumn('number', 'Humidity');
+                temperatureArray.addColumn({type: 'string', role: 'tooltip','p':{'html':true}});
+
+                for (var i = 0; i < data.length; i++) {
+                    var date = new Date(data[i][0] * 1000);
+                    var temperature = data[i][1];
+                    var pressure=data[i][2];
+                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature,'Temperature'), pressure, buildTemperature(date, pressure,'Humidity')]);
+                }
+                chart.draw(temperatureArray, options);
+
+
+            }, "json");
+        }
+
+        function updateTemperature() {
+            $.get("sensors/currentTemp", function (data) {
+                $('#currentTemp').html("T: " + data + "C&deg;");
+            }, "json");
+        }
+        function updateHumidity() {
+            $.get("sensors/currentHumidity", function (data) {
+                $('#currentHumidity').html("H: " + data + "%");
+            }, "json");
+        }
+        function fromUnixTimestamp(unix_timestamp) {
+            var date = new Date(unix_timestamp * 1000);
+            var hours = date.getHours();
+            var minutes = "0" + date.getMinutes();
+            var seconds = "0" + date.getSeconds();
+            return hours + ':' + minutes.substr(minutes.length - 2) + ':' + seconds.substr(seconds.length - 2);
+        }
+
+        function calculateAndDisplayAge() {
+            var nowDate = new Date();
+            var diff = nowDate.valueOf() - birth.valueOf();
+            var days = parseInt(diff / 1000 / 60 / 60 / 24);
+            var hours = parseInt((diff - days * 1000 * 60 * 60 * 24) / 60 / 60 / 1000);
+            var minutes = parseInt((diff - days * 1000 * 60 * 60 * 24 - hours * 60 * 60 * 1000) / 1000 / 60);
+            $('#timeLived').html(days + " Days " + hours + " hours " + minutes + " minutes");
+        }
+        function buildTemperature(date, temperature,label) {
+            return '<div style="padding:5px 5px 5px 5px;">' +
+                    '<br/>' +
+                    '<table>' +
+                    '<tr>' +
+                    '<td><b>Date: </b>' + date.toLocaleDateString("EN-US")+' '+date.toLocaleTimeString("EN-US") + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><b>'+label+': </b>' + temperature + '</td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '</div>';
+        }
+
+        //]]>
+    </script>
+
+</head>
+<body>
+
+<div id="content">
+    <div class="displayDataBigFont">
+        <div id="currentTemp" class="currentTempAndHumidity"></div>
+        <div id="currentHumidity" class="currentTempAndHumidity"></div>
+    </div>
+    <div>
+        <div id="timeLived"></div>
+    </div>
+</div>
+<div id="curve_chart" style="width: 100%; height: 500px"></div>
+</body>
+</html>

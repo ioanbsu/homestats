@@ -10,8 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/config_server" />
-            <option value="$PROJECT_DIR$/dashboard" />
             <option value="$PROJECT_DIR$/eureka-service" />
+            <option value="$PROJECT_DIR$/hystrix_dashboard" />
             <option value="$PROJECT_DIR$/model" />
             <option value="$PROJECT_DIR$/room_sensors" />
             <option value="$PROJECT_DIR$/sensors_data_provider" />

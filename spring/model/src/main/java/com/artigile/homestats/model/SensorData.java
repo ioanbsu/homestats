@@ -61,4 +61,12 @@ public class SensorData {
                 ", pressure=" + pressure +
                 '}';
     }
+
+    public Float[] toDataArray() {
+        return new Float[]{Float.valueOf(getId().getTime()/1000),
+                getTemperature() ,
+                getHumidity() ,
+                Float.valueOf(getPressure())
+        };
+    }
 }

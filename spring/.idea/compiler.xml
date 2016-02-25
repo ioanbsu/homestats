@@ -31,6 +31,8 @@
       <module name="eurika-service_test" target="1.8" />
       <module name="eurika_main" target="1.8" />
       <module name="eurika_test" target="1.8" />
+      <module name="hystrix_dashboard_main" target="1.8" />
+      <module name="hystrix_dashboard_test" target="1.8" />
       <module name="model_main" target="1.8" />
       <module name="model_test" target="1.8" />
       <module name="room_sensors_main" target="1.8" />
