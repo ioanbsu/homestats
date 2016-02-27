@@ -15,26 +15,20 @@
  */
 package com.artigile.homestats;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 import com.artigile.homestats.sensor.SensorsDataProvider;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderUtil;
-import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.*;
 
 import java.text.DecimalFormat;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 @ChannelHandler.Sharable
 public class HomeStatsHandler extends ChannelHandlerAdapter {
