@@ -16,16 +16,32 @@
         }
     </style>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript"
-            src="https://www.google.com/jsapi?autoload={
-            'modules':[{
-              'name':'visualization',
-              'version':'1.1',
-              'packages':['corechart']
-            }]
-          }"></script>
+    <!--c3j chart-->
+    <!--======================================-->
+    <!--======================================-->
+    <!--======================================-->
+    <!--======================================-->
+    <!-- Load c3.css -->
+    <link href="http://c3js.org/css/normalize-e465cb86.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="http://c3js.org/css/foundation.min-978d4ce8.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="http://c3js.org/css/tomorrow-d7cf0921.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="http://c3js.org/css/c3-b03125fa.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="http://c3js.org/css/style-99fb8989.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="http://c3js.org/css/samples/simple_multiple-da39a3ee.css" media="screen" rel="stylesheet"
+          type="text/css"/>
 
+    <!-- Load d3.js and c3.js -->
+    <script src="http://c3js.org/js/d3-3.5.0.min-3b564392.js" charset="utf-8"></script>
+    <script src="http://c3js.org/js/c3.min-12912fb6.js"></script>
+
+
+    <!--======================================-->
+
+    <!--======================================-->
+    <!--======================================-->
+    <!--======================================-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript">
         var birth = new Date(2015, 2, 4, 7, 58, 0, 0);
         updateTemperature();
@@ -37,109 +53,66 @@
         }, 1000 * 2);
 
 
-        var chart = null;
-        var options = {
-            title: 'Temperature and Humidity',
-            curveType: 'function',
-            legend: {position: 'bottom'},
-            lineWidth: 3,
-            animation: {
-                duration: 1000,
-                easing: 'out',
-                startup: true
-            },
-            vAxes: {
-                0: {
-                    viewWindowMode: 'explicit',
-                    gridlines: {color: 'transparent'},
-                },
-                1: {gridlines: {color: 'transparent'}},
-            },
-            series: {
-                0: {targetAxisIndex: 0},
-                1: {targetAxisIndex: 1}
-            },
-            hAxis: {
-                gridlines: {
-                    count: -1,
-                    units: {
-                        days: {format: ["MMM dd"]},
-                        hours: {format: ["HH:mm", "ha"]},
-                    }
-                },
-                minorGridlines: {
-                    units: {
-                        hours: {format: ["hh:mm:ss a", "ha"]},
-                        minutes: {format: ["HH:mm a Z", ":mm"]}
-                    }
-                }
-            },
-            tooltip: {isHtml: true}
-        };
-        google.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        refreshGraph();
+        setInterval(function () {
             refreshGraph();
-            setInterval(function () {
-                refreshGraph();
-            }, 1000 * 2 * 60);
-        }
+        }, 1000 * 2 * 60);
 
 
-        function buildc3js(data) {
+        function buildc3js(dataFromServer) {
+
+            xData = []
+            c3jPressure = []
+            c3jTemperature = []
+            xData.push('x');
+            c3jPressure.push('pressure');
+            c3jTemperature.push('temperature');
+
+            for (var i = 0; i < dataFromServer.length; i++) {
+                var date = new Date(dataFromServer[i][0] * 1000);
+                var temperature = dataFromServer[i][1];
+                var pressure = dataFromServer[i][2];
+                xData.push(date);
+                c3jPressure.push(pressure);
+                c3jTemperature.push(temperature);
+            }
 
             var chart = c3.generate({
                 data: {
                     x: 'x',
 //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
                     columns: [
-                        ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+                        xData,
 //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-                        ['data1', 30, 200, 100, 400, 150, 250],
-                        ['data2', 130, 340, 200, 500, 250, 350]
-                    ]
+                        c3jPressure,
+                        c3jTemperature
+                    ],
+                    axes: {
+                        pressure: 'y',
+                        temperature: 'y2'
+                    }
                 },
                 axis: {
                     x: {
                         type: 'timeseries',
                         tick: {
-                            format: '%Y-%m-%d'
+                            format: '%Y-%m-%d %H:%M'
                         }
+                    }, y2: {
+                        show: true
                     }
                 },
                 zoom: {
                     enabled: true
+                },
+                point: {
+                    show: false
                 }
             });
-
-            setTimeout(function () {
-                chart.load({
-                    columns: [
-                        ['data3', 400, 500, 450, 700, 600, 500]
-                    ]
-                });
-            }, 1000);
         }
         function refreshGraph() {
             $.get("app/getData", function (data) {
-                temperatureArray = new google.visualization.DataTable();
-                temperatureArray.addColumn('date', 'Time');
-                temperatureArray.addColumn('number', 'Temperature');
-                temperatureArray.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
-                temperatureArray.addColumn('number', 'Humidity');
-                temperatureArray.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
-
-                for (var i = 0; i < data.length; i++) {
-                    var date = new Date(data[i][0] * 1000);
-                    var temperature = data[i][1];
-                    var pressure = data[i][2];
-                    temperatureArray.addRow([date, temperature, buildTemperature(date, temperature, 'Temperature'), pressure, buildTemperature(date, pressure, 'Humidity')]);
-                }
-                chart.draw(temperatureArray, options);
-
                 buildc3js(data);
-
             }, "json");
         }
 
@@ -152,13 +125,6 @@
             $.get("app/getCurrentHumidity", function (data) {
                 $('#currentHumidity').html("H: " + data + "%");
             }, "json");
-        }
-        function fromUnixTimestamp(unix_timestamp) {
-            var date = new Date(unix_timestamp * 1000);
-            var hours = date.getHours();
-            var minutes = "0" + date.getMinutes();
-            var seconds = "0" + date.getSeconds();
-            return hours + ':' + minutes.substr(minutes.length - 2) + ':' + seconds.substr(seconds.length - 2);
         }
 
         function calculateAndDisplayAge() {
@@ -187,32 +153,8 @@
     </script>
 
 
-    <!--c3j chart-->
-    <!--======================================-->
-    <!--======================================-->
-    <!--======================================-->
-    <!--======================================-->
-    <!-- Load c3.css -->
-    <link href="http://c3js.org/css/normalize-e465cb86.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="http://c3js.org/css/foundation.min-978d4ce8.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="http://c3js.org/css/tomorrow-d7cf0921.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="http://c3js.org/css/c3-b03125fa.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="http://c3js.org/css/style-99fb8989.css" media="screen" rel="stylesheet" type="text/css"/>
-    <link href="http://c3js.org/css/samples/simple_multiple-da39a3ee.css" media="screen" rel="stylesheet"
-          type="text/css"/>
-
-    <!-- Load d3.js and c3.js -->
-    <script src="http://c3js.org/js/d3-3.5.0.min-3b564392.js" charset="utf-8"></script>
-    <script src="http://c3js.org/js/c3.min-12912fb6.js"></script>
-
-
-    <!--======================================-->
-
-    <!--======================================-->
-    <!--======================================-->
-    <!--======================================-->
 </head>
-<body>
+<body onload="refreshGraph()">
 
 <div id="content">
     <div class="displayDataBigFont">
@@ -223,7 +165,6 @@
         <div id="timeLived"></div>
     </div>
 </div>
-<div id="curve_chart" style="width: 100%; height: 500px"></div>
 
 <div id="chart"></div>
 
