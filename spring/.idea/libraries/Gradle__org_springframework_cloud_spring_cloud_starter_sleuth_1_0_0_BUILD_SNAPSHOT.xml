@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.springframework.cloud:spring-cloud-starter-sleuth:1.0.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-sleuth/1.0.0.BUILD-SNAPSHOT/ab3dfee56ddba9655e4292c13ea4f781027895c/spring-cloud-starter-sleuth-1.0.0.BUILD-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-sleuth/1.0.0.BUILD-SNAPSHOT/37aabeb01ba6ba44171f625a4ef083966fe2be76/spring-cloud-starter-sleuth-1.0.0.BUILD-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-sleuth/1.0.0.BUILD-SNAPSHOT/cc9b00b9378ab257915093092aaee083a30ee4d6/spring-cloud-starter-sleuth-1.0.0.BUILD-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-sleuth/1.0.0.BUILD-SNAPSHOT/6cb2d3feafb9406721de53e5df22d61953e3defe/spring-cloud-starter-sleuth-1.0.0.BUILD-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

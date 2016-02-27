@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.springframework.cloud:spring-cloud-starter-hystrix-dashboard:1.1.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/ba41b9ee9acdbf3f16e5afdb2bd98d1bc448f59f/spring-cloud-starter-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/3dd5c4b03b9e8d9b34f11a5ce8146ce9c9e1ab8/spring-cloud-starter-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/ddcb5e60e694b89462b593b6f34179ad78f10d49/spring-cloud-starter-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/b8ad9ad8a3d0024cbb6ff6ffb804f7bb3a541bca/spring-cloud-starter-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -16,10 +16,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @EnableCircuitBreaker
@@ -45,8 +42,7 @@ class SensorsRestController {
     @HystrixCommand(fallbackMethod = "defaultDataHistory")
     @RequestMapping(method = RequestMethod.GET, value = "lastN")
     public Collection<Float[]> lastNValues() {
-
-        SensorData[] responseArray = restTemplate.getForObject("http://ivannaroom/recentSensors", SensorData[].class);
+        SensorData[] responseArray = restTemplate.getForObject("http://roomsensors/recentSensors", SensorData[].class);
         Collection<SensorData> responseCollection = Arrays.asList(responseArray);
         return responseCollection
                 .stream()
@@ -61,7 +57,7 @@ class SensorsRestController {
         String startDate = requestDateTimeFormat.format(Date.from(LocalDateTime.now().minusDays(5).toInstant(ZoneOffset.UTC)));
         String endDate = requestDateTimeFormat.format(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
 
-        SensorData[] responseArray = restTemplate.getForObject("http://ivannaroom/sensors?startDate=" + startDate
+        SensorData[] responseArray = restTemplate.getForObject("http://roomsensors/sensors?startDate=" + startDate
                         + "&endDate=" + endDate,
                 SensorData[].class);
         Collection<SensorData> responseCollection = Arrays.asList(responseArray);
@@ -73,20 +69,35 @@ class SensorsRestController {
 
     @RequestMapping(method = RequestMethod.GET, value = "currentTemp")
     public Float getCurrentTemp() {
-        return new BigDecimal(restTemplate.getForObject("http://ivannaroom/currentTemp", Float.class))
-                .setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        Optional<Float> temp = Optional.ofNullable(restTemplate.getForObject("http://roomsensors/currentTemp", Float.class));
+        if (temp.isPresent()) {
+            return new BigDecimal(temp.get()).setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        } else {
+            return null;
+        }
+
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "currentHumidity")
     public Float getCurrentHumidity() {
-        return new BigDecimal(restTemplate.getForObject("http://ivannaroom/currentHumidity", Float.class))
-                .setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        Optional<Float> humidity = Optional.ofNullable(restTemplate.getForObject("http://roomsensors/currentHumidity", Float.class));
+        if (humidity.isPresent()) {
+            return new BigDecimal(humidity.get()).setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        } else {
+            return null;
+        }
+
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "currentPressure")
     public Float getCurrentPressure() {
-        return new BigDecimal(restTemplate.getForObject("http://ivannaroom/currentPressure", Float.class))
-                .setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        Optional<Float> pressure = Optional.ofNullable(restTemplate.getForObject("http://roomsensors/currentPressure", Float.class));
+        if (pressure.isPresent()) {
+            return new BigDecimal(pressure.get()).setScale(2, BigDecimal.ROUND_CEILING).floatValue();
+        } else {
+            return null;
+        }
+
     }
 
 

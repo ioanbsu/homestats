@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.springframework.cloud:spring-cloud-starter-hystrix:1.1.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix/1.1.0.BUILD-SNAPSHOT/604d9e04384f092500b5b782a0f8366c048e15a5/spring-cloud-starter-hystrix-1.1.0.BUILD-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix/1.1.0.BUILD-SNAPSHOT/82a3897aead8a131a8053b79824ae73742e690/spring-cloud-starter-hystrix-1.1.0.BUILD-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix/1.1.0.BUILD-SNAPSHOT/8385e3b45a2ee6a7c03667c3ca811be170c3630a/spring-cloud-starter-hystrix-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-starter-hystrix/1.1.0.BUILD-SNAPSHOT/80258607a667d68c1e250e84b90e5f9ab179380/spring-cloud-starter-hystrix-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

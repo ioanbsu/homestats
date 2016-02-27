@@ -6,7 +6,6 @@ import com.artigile.homestats.sensor.DummySensor;
 import com.artigile.homestats.sensor.HTU21F;
 import com.artigile.homestats.sensor.SensorsDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -49,13 +48,13 @@ public class RoomSensorsApplication {
     }
 
     @Bean
-    @Profile("htu21f")
+    @Profile("ivannaroom")
     public SensorsDataProvider htu21DataProvider() {
         return new HTU21F();
     }
 
     @Bean
-    @Profile("bmp085anfdht11")
+    @Profile("fitbit")
     public SensorsDataProvider bmp085DataProvider() {
         try {
             return new BMP085AnfDht11();
@@ -82,8 +81,6 @@ class SensorsRestController {
     @Autowired
     private SensorsDataProvider sensorsDataProvider;
 
-    @Value("${message}")
-    private String msg;
 
     @RequestMapping("/sensors")
     Collection<SensorData> getSensoersDataForDates(@RequestParam("startDate") @DateTimeFormat(pattern = SensorData.DATE_TIME_FORMAT) Date startDate,
@@ -119,7 +116,7 @@ class SensorsRestController {
     }
 
     @RequestMapping("/recentSensors")
-    Collection<SensorData> message() {
+    Collection<SensorData> recentSensorsData() {
         return sensorRepository.findById(Date.from(LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC)), new Date());
     }
 

@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.springframework.cloud:spring-cloud-netflix-hystrix-dashboard:1.1.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-netflix-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/422403a1c68561c9aa84dda7e4fe473da05243db/spring-cloud-netflix-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-netflix-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/57570582f5db5ed38760bd4226bb62eefd57988b/spring-cloud-netflix-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-netflix-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/67e9321f80a7f764dcc0ee73b6e3a218d9c196dd/spring-cloud-netflix-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-netflix-hystrix-dashboard/1.1.0.BUILD-SNAPSHOT/8d3697f510f95fdc07e41d533059932fb62352a5/spring-cloud-netflix-hystrix-dashboard-1.1.0.BUILD-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
