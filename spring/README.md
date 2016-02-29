@@ -42,3 +42,20 @@
  
  * web - the web interface to expose the historical data and current sensors readings.
  
+ 
+ 
+## To start the application
+ 
+ * java -jar config_server/build/libs/config-0.0.1-SNAPSHOT.jar &
+
+    make sure that config server is started before proceeding further.
+ 
+ * java -jar eureka-service/build/libs/eurika-0.0.1-SNAPSHOT.jar&
+  
+ * sudo java -jar room_sensors/build/libs/homestats-0.0.1-SNAPSHOT.jar --spring.profiles.active=ivannaroom&
+    IMPORTANT if no profiles specified the room_sensors module will be using default sensors providers implementation which 
+    will always return fake data.
+ 
+ * java -jar web/build/libs/web-0.0.1-SNAPSHOT.jar&
+    
+ * optional: java -jar hystrix_dashboard/build/libs/dashboard-0.0.1-SNAPSHOT.jar&
