@@ -63,18 +63,18 @@
         function buildc3js(dataFromServer) {
 
             xData = []
-            c3jPressure = []
+            c3jHumidity = []
             c3jTemperature = []
             xData.push('x');
-            c3jPressure.push('pressure');
+            c3jHumidity.push('humidity');
             c3jTemperature.push('temperature');
 
             for (var i = 0; i < dataFromServer.length; i++) {
                 var date = new Date(dataFromServer[i][0] * 1000);
                 var temperature = dataFromServer[i][1];
-                var pressure = dataFromServer[i][2];
+                var humidity = dataFromServer[i][2];
                 xData.push(date);
-                c3jPressure.push(pressure);
+                c3jHumidity.push(humidity);
                 c3jTemperature.push(temperature);
             }
 
@@ -88,17 +88,17 @@
                     columns: [
                         xData,
 //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-                        c3jPressure,
+                        c3jHumidity,
                         c3jTemperature
                     ],
                     axes: {
-                        pressure: 'y',
+                        humidity: 'y',
                         temperature: 'y2'
                     },
                     type: 'spline',
                     colors: {
                         temperature: '#ff0000',
-                        pressure: '#0000ff'
+                        humidity: '#0000ff'
                     }
                 },
                 axis: {
