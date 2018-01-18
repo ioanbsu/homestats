@@ -24,6 +24,8 @@ import static com.artigile.homestats.ArgsParser.PRINT_AND_EXIT;
 
 import com.artigile.homestats.sensor.BMP085AnfDht11;
 import com.artigile.homestats.sensor.HTU21F;
+import com.artigile.homestats.sensor.SensorFactory;
+import com.artigile.homestats.sensor.SensorMode;
 import com.artigile.homestats.sensor.SensorsDataProvider;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -63,22 +65,18 @@ public final class HomeStatsServer {
         EventLoopGroup bossGroup = null;
         EventLoopGroup workerGroup = null;
         try {
-            AppMode appMode = AppMode.valueOf(argsParser.getString(APP_MODE_OPTION, "dev").toUpperCase());
-            SensorsDataProvider sensorsDataProvider;
-            if (appMode == AppMode.HTU21F) {
-                sensorsDataProvider = new HTU21F();
-            } else if (appMode == AppMode.BMP085) {
-                sensorsDataProvider = new BMP085AnfDht11();
-                ((BMP085AnfDht11) sensorsDataProvider).init();
-            } else {
-                sensorsDataProvider = null;
+            SensorMode appMode = SensorMode.valueOf(
+                argsParser.getString(ArgsParser.APP_MODE_OPTION, "dev").toUpperCase());
+
+            SensorsDataProvider sensorsDataProvider = SensorFactory.buildSensorDataProvider(appMode);
+            if(sensorsDataProvider==null){
+                LOGGER.error("No sensor device available, quitting.");
+                return;
             }
 
-            final boolean printAndExit = argsParser.argumentPassed(PRINT_AND_EXIT);
+            final boolean printAndExit = argsParser.argumentPassed(ArgsParser.PRINT_AND_EXIT);
             if (printAndExit) {
-                LOGGER.info("Temperature: {}. ", sensorsDataProvider.readTemperature());
-                LOGGER.info("Humidity: {}", sensorsDataProvider.readHumidity());
-                LOGGER.info("Pressure(in Pa) {}", sensorsDataProvider.readPressure());
+                sensorsDataProvider.printAll();
                 return;
             }
 

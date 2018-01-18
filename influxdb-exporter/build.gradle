@@ -17,8 +17,6 @@ ext {
             guava   : '18.0',
             jsr305  : 'jsr305:3.0.0',
             logback : '1.1.2',
-            tomlette: '0.2',
-            netty   : '5.0.0.Alpha2',
             influxdbclient: '2.8',
 
 //                tests
@@ -30,23 +28,18 @@ ext {
 
 dependencies {
 
-    compile "io.netty:netty-codec-http:${versions.netty}",
-            "io.netty:netty-codec-http2:${versions.netty}",
-            "io.netty:netty-transport:${versions.netty}",
-            "io.netty:netty-transport-native-epoll:${versions.netty}:linux-x86_64",
-            "org.javassist:javassist:3.19.0-GA",
-            "com.google.guava:guava:${versions.guava}",
+    compile "com.google.guava:guava:${versions.guava}",
             "com.google.code.findbugs:${versions.jsr305}",
             "ch.qos.logback:logback-classic:${versions.logback}",
             "org.influxdb:influxdb-java:${versions.influxdbclient}",
             "commons-cli:commons-cli:1.2",
-            "mysql:mysql-connector-java:5.1.9",
             "com.pi4j:pi4j-core:1.0",
             "net.logstash.logback:logstash-logback-encoder:3.6"
+
     compile project(":sensor-reader")
 
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-mainClassName = 'com.artigile.homestats.HomeStatsServer'
+mainClassName = 'com.artigile.homestats.exporter.ExporterService'

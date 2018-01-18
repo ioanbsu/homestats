@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * @author ivanbahdanau
  */
-public class BMP085AnfDht11 implements SensorsDataProvider {
+public class BMP085AnfDht11 extends AbstractSensorDataProvider {
     private I2CDevice device;
     private int ac1;
     private int ac2;

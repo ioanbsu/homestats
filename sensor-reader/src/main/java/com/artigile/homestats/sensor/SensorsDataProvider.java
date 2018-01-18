@@ -9,4 +9,6 @@ public interface SensorsDataProvider {
     float readHumidity() throws Exception;
 
     int readPressure() throws Exception;
+
+    void printAll() throws Exception;
 }
