@@ -119,11 +119,12 @@ public class DysonDataProvider implements MqttCallback {
                         .withP10r(seonsorsJsonData.getInt("p10r"))
                         .withSltm(parseBoolean(seonsorsJsonData, "sltm"));
                 dysonPureCoolDataBuilder.withCurrentSensorData(sensorsDataBuilder.build());
+                if (dysonPureCoolDataConsumer != null) {
+                    dysonPureCoolDataConsumer.accept(
+                        dysonDeviceBuilder.withDysonPureCoolData(dysonPureCoolDataBuilder.build()).build());
+                }
             }
-            if (dysonPureCoolDataConsumer != null) {
-                dysonPureCoolDataConsumer.accept(
-                    dysonDeviceBuilder.withDysonPureCoolData(dysonPureCoolDataBuilder.build()).build());
-            }
+
         } catch (Exception e) {
             LOGGER.warn("Message parsing exception", e);
         }

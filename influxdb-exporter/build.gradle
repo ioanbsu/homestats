@@ -37,6 +37,7 @@ dependencies {
             "net.logstash.logback:logstash-logback-encoder:3.6"
 
     compile project(":sensor-reader")
+    compile project(":dyson")
 
 
     testCompile group: 'junit', name: 'junit', version: '4.11'

@@ -5,12 +5,16 @@ import static com.artigile.homestats.exporter.ArgsParser.DB_HOST_OPTION;
 import static com.artigile.homestats.exporter.ArgsParser.DB_NAME;
 import static com.artigile.homestats.exporter.ArgsParser.DB_PWD_OPTION;
 import static com.artigile.homestats.exporter.ArgsParser.DB_USER_OPTION;
+import static com.artigile.homestats.exporter.ArgsParser.DYSON_EMAIL;
+import static com.artigile.homestats.exporter.ArgsParser.DYSON_PASSROD;
 
 import com.artigile.homestats.DataService;
 import com.artigile.homestats.DbDao;
 import com.artigile.homestats.sensor.SensorFactory;
 import com.artigile.homestats.sensor.SensorMode;
 import com.artigile.homestats.sensor.SensorsDataProvider;
+import com.artigile.homestats.sensor.dyson.DysonConnect;
+import com.google.common.base.Strings;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +57,17 @@ public class ExporterService {
             final int port = Integer.valueOf(argsParser.getString(APP_PORT_OPTION, PORT + ""));
             final String dbName = argsParser.getString(DB_NAME);
 
-            new DataService(sensorsDataProvider, new DbDao(dbHost, user, pwd, port, dbName), DB_POLL_INTERVAL).start();
+            final String dysonEmail = argsParser.getString(DYSON_EMAIL);
+            final String dysonPwd = argsParser.getString(DYSON_PASSROD);
+            final DysonConnect dysonConnect;
+            if (!Strings.isNullOrEmpty(dysonEmail) && !Strings.isNullOrEmpty(dysonPwd)) {
+                dysonConnect = new DysonConnect(dysonEmail, dysonPwd);
+            } else {
+                dysonConnect = null;
+            }
+
+            new DataService(sensorsDataProvider, new DbDao(dbHost, user, pwd, port, dbName), dysonConnect,
+                DB_POLL_INTERVAL).start();
         } catch (Exception e) {
             e.printStackTrace();
         }

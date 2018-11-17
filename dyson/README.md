@@ -8,6 +8,21 @@ Run following cmds:
 ## Quick start
 Run `./gradlew dyson:clean dyson:run --args="your_email@blabla.com password`
 
+##Troubleshooting
+If you encounter `java.security.InvalidKeyException: Illegal key size` when the localCredentials key is parsed, please follow instructions below(tested in Raspbian GNU/Linux 7, but should work in most unix based envs):
+
+1. Go to Oracle’s website and search for ‘Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files’.
+
+2. Depending upon the Java version installed on your machine, download the zip file and extract it on your drive.
+
+3. `unzip jce_policy-8.zip` ( or jce_policy-{YOUR_VERSION}.zip}
+
+4. `cd UnlimitedJCEPolicyJDK8` (or UnlimitedJCEPolicyJDK{YOUR_VERSION})
+
+5. `cp ./*policy.jar your_java_installation_directory/jre/lib/security`
+
+6. Restart your project that uses Dyson lib. Should work now.
+
 ## Using as a library:
 The `com.artigile.homestats.sensor.dyson.Dyson` contains example how to subscribe for devices updates with consumer.
 Happy coding :) 

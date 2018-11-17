@@ -95,13 +95,34 @@ final class ArgsParser {
         .withLongOpt("print")
         .withArgName("PRINT")
         .create("i");
+
+    /**
+     * Dyson online email(used as login).
+     */
+    public static final Option DYSON_EMAIL = OptionBuilder
+        .withDescription("Dyson email")
+        .withLongOpt("dysonEmail")
+        .withArgName("DYSON_EMAIL")
+        .hasArg()
+        .create();
+
+    /**
+     * Dyson online email(used as login).
+     */
+    public static final Option DYSON_PASSROD = OptionBuilder
+        .withDescription("Dyson password")
+        .withLongOpt("dysonPassword")
+        .withArgName("DYSON_PASSWORD")
+        .hasArg()
+        .create();
+
     /**
      * Available options that are parsed and recognized.
      */
     private static final Options AVAILABLE_ARGS = new Options()
         .addOption(APP_MODE_OPTION).addOption(DB_HOST_OPTION).addOption(DB_PWD_OPTION)
         .addOption(DB_USER_OPTION).addOption(APP_PORT_OPTION).addOption(PRINT_AND_EXIT)
-        .addOption(DB_NAME);
+        .addOption(DB_NAME).addOption(DYSON_EMAIL).addOption(DYSON_PASSROD);
     /**
      * Help options.
      */

@@ -45,7 +45,9 @@ public class SensorData {
     /**
      * Sleep timer.
      */
-    private final boolean sltm;
+    public final boolean sltm;
+
+    public Instant builtAt;
 
     private SensorData(final Builder builder) {
         this.instant = builder.instant;
@@ -58,6 +60,7 @@ public class SensorData {
         this.p25r = builder.p25r;
         this.p10r = builder.p10r;
         this.sltm = builder.sltm;
+        this.builtAt = Instant.now();
     }
 
     @Override

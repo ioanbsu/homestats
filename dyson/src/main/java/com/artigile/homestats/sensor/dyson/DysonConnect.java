@@ -4,6 +4,7 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import com.artigile.homestats.sensor.dyson.model.DeviceDescription;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -11,7 +12,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.http.HttpStatus;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,8 +43,8 @@ public class DysonConnect {
     private final String password;
 
     public DysonConnect(final String email, final String password) {
-        Preconditions.checkArgument(!Strings.isEmpty(email),"Please provide email, email can't be empty");
-        Preconditions.checkArgument(!Strings.isEmpty(email),"Please provide password, password can't be empty");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(email),"Please provide email, email can't be empty");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(email),"Please provide password, password can't be empty");
         this.email = email;
         this.password = password;
     }
@@ -152,8 +152,7 @@ public class DysonConnect {
 
         } catch (Exception e) {
             LOGGER.warn(
-                "device local credentials failed to be parsed. This device won't be connected to. LocalCredentials: {}",
-                localCredentials);
+                "device local credentials failed to be parsed. This device won't be connected to. LocalCredentials: "+localCredentials,e);
             return null;
         }
     }
