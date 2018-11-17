@@ -67,7 +67,7 @@ final class ArgsParser {
         .create("p");
 
     /**
-     * DB user login name.
+     * DB user watchLocalDevices name.
      */
     public static final Option DB_USER_OPTION = OptionBuilder
         .withDescription("Database user")

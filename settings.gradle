@@ -15,5 +15,5 @@ include 'api'
 include 'services:webservice'
 */
 
-include 'netty-server','influxdb-exporter','sensor-reader'
+include 'netty-server','influxdb-exporter','sensor-reader','dyson'
 rootProject.name = 'homestats'

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="logstashToFileAppender" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/app/vestibule/logstash.log</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <param name="level" value="INFO"/>
+        </filter>
+    </appender>
+
+    <appender name="allLogsFile" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/app/vestibule/vestibule.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <param name="level" value="INFO"/>
+        </filter>
+    </appender>
+
+    <logger name="logstashLogger" level="INFO">
+        <appender-ref ref="logstashToFileAppender"/>
+    </logger>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="allLogsFile"/>
+        <appender-ref ref="console"/>
+    </root>
+</configuration>
