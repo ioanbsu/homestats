@@ -2,7 +2,8 @@ In order to be able to make requests against https://api.cp.dyson.com/ cert from
 ## IMPORTANT: Add dyson's cert to your local JVM cacerts
 Run following cmds:
 1. `openssl s_client -connect  api.cp.dyson.com:443 </dev/null| sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > dyson_gen.cert`
-2. `sudo keytool -import -alias dyson -keystore /path/to/cacerts -file ~/Workspace/git/homestats/dyson_gen.cert`. Replace `/path/to/cacerts` with real path, most likely `JAVA_HOME/jre/lib/security/cacerts`
+2. `sudo keytool -import -alias dyson -keystore /path/to/cacerts -file dyson_gen.cert`. Replace `/path/to/cacerts` with real path, most likely `JAVA_HOME/jre/lib/security/cacerts`
+3. if password is asked try using "changeit".
 
 ## Quick start
 Run `./gradlew dyson:clean dyson:run --args="your_email@blabla.com password`
