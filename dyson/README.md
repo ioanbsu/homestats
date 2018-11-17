@@ -9,7 +9,7 @@ Run following cmds:
 Run `./gradlew dyson:clean dyson:run --args="your_email@blabla.com password`
 
 ## Using as a library:
-The `com.artigile.homestats.sensor.dyson.Dyson` contains example how this 
+The `com.artigile.homestats.sensor.dyson.Dyson` contains example how to subscribe for devices updates with consumer. 
 
 ## Disclaimer
 Please feel free to use this code any way you'd like. Keep in mind though that author is not responsible for any damage or malfunction or your devices.
