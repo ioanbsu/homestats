@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -61,9 +60,11 @@ public class DysonDataProvider implements MqttCallback {
             try {
                 if (!client.isConnected()) {
                     client.close(true);
+                    LOGGER.info("Connection lost to dyson {}. \n\tReconnecting... ", deviceDescription);
                     initiateNewMqttConnection(device, deviceDescription);
                 }
-                client.publish(deviceDescription.productType + "/" + deviceDescription.localCredentials.serial + "/command",
+                client.publish(
+                    deviceDescription.productType + "/" + deviceDescription.localCredentials.serial + "/command",
                     new MqttMessage((payload).getBytes()));
             } catch (MqttException e) {
                 e.printStackTrace();
@@ -81,13 +82,12 @@ public class DysonDataProvider implements MqttCallback {
         conOpt.setCleanSession(true);
         conOpt.setUserName(username);
         conOpt.setPassword(deviceDescription.localCredentials.passwordHash.toCharArray());
-        conOpt.setAutomaticReconnect(true);
 
         this.client = new MqttClient(host, "JavaDysonListener_" + random.nextInt(1000), new MemoryPersistence());
         this.client.setCallback(this);
         this.client.connect(conOpt);
-
         this.client.subscribe(topic, QOS);
+        this.client.setTimeToWait(1000);
     }
 
     @Override
