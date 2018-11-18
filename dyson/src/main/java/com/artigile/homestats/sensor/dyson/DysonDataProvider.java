@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +37,8 @@ public class DysonDataProvider implements MqttCallback {
     private DysonDevice.Builder dysonDeviceBuilder = new DysonDevice.Builder();
     private MqttClient client;
     private Consumer<DysonDevice> dysonPureCoolDataConsumer;
+
+    private final static SecureRandom random = new SecureRandom();
 
     /**
      * Establishes connection to dyson devices ans periodically sends signal to it to force an updated mqtt message
@@ -60,7 +64,7 @@ public class DysonDataProvider implements MqttCallback {
         conOpt.setPassword(deviceDescription.localCredentials.passwordHash.toCharArray());
         conOpt.setAutomaticReconnect(true);
 
-        this.client = new MqttClient(host, "JavaDysonListener", new MemoryPersistence());
+        this.client = new MqttClient(host, "JavaDysonListener_" + random.nextInt(1000), new MemoryPersistence());
         this.client.setCallback(this);
         this.client.connect(conOpt);
 

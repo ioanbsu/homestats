@@ -9,7 +9,7 @@ Run following cmds:
 Run `./gradlew dyson:clean dyson:run --args="your_email@blabla.com password`
 
 ## Troubleshooting
-If you encounter `java.security.InvalidKeyException: Illegal key size` when the localCredentials key is parsed, please follow instructions below(tested in Raspbian GNU/Linux 7, but should work in most unix based envs):
+If you encounter `java.security.InvalidKeyException: Illegal key size` when Dyson `localCredentials` key is parsed, please follow instructions below(tested in Raspbian GNU/Linux 7, but should work in most unix based envs):
 
 1. Go to Oracle’s website and search for ‘Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files’.
 
