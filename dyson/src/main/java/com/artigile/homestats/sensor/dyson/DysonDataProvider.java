@@ -54,6 +54,25 @@ public class DysonDataProvider implements MqttCallback {
                              TimeUnit timeUnit) throws MqttException {
 
         dysonDeviceBuilder.withDeviceDescription(deviceDescription);
+        initiateNewMqttConnection(device, deviceDescription);
+        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            final String payload = "{\"msg\":\"REQUEST-CURRENT-STATE\",\"time\":\"" + Instant.now() + "\"}";
+            LOGGER.debug("SendingSending CMD: {}", payload);
+            try {
+                if (!client.isConnected()) {
+                    client.close(true);
+                    initiateNewMqttConnection(device, deviceDescription);
+                }
+                client.publish(deviceDescription.productType + "/" + deviceDescription.localCredentials.serial + "/command",
+                    new MqttMessage((payload).getBytes()));
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }, 0, pollInterval, timeUnit);
+    }
+
+    private void initiateNewMqttConnection(InetSocketAddress device,
+                                           DeviceDescription deviceDescription) throws MqttException {
         final String host = String.format("tcp://%s:%d", device.getHostName(), device.getPort());
         final String username = deviceDescription.localCredentials.serial;
         final String topic = deviceDescription.productType + "/" + username + "/status/current";
@@ -69,19 +88,6 @@ public class DysonDataProvider implements MqttCallback {
         this.client.connect(conOpt);
 
         this.client.subscribe(topic, QOS);
-        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-            final String payload = "{\"msg\":\"REQUEST-CURRENT-STATE\",\"time\":\"" + Instant.now() + "\"}";
-            LOGGER.debug("SendingSending CMD: {}", payload);
-            try {
-                if (!client.isConnected()) {
-                    client.connect(conOpt);
-                }
-                client.publish(deviceDescription.productType + "/" + username + "/command",
-                    new MqttMessage((payload).getBytes()));
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-        }, 0, pollInterval, timeUnit);
     }
 
     @Override
