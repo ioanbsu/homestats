@@ -109,7 +109,7 @@ public class DysonDataProvider implements MqttCallback {
                 final SensorData.Builder sensorsDataBuilder =
                     new SensorData.Builder()
                         .withDate(Instant.parse(jsonMsg.getString("time")))
-                        .withTact(seonsorsJsonData.getInt("tact"))
+                        .withTempCelsius(seonsorsJsonData.getInt("tact") / 10. - 273)
                         .withHact(seonsorsJsonData.getInt("hact"))
                         .withPm25(seonsorsJsonData.getInt("pm25"))
                         .withPm10(seonsorsJsonData.getInt("pm10"))

@@ -10,9 +10,9 @@ public class SensorData {
      */
     public final Instant instant;
     /**
-     * Temp in kelvin
+     * Temp in inCelcius
      */
-    public final int tact;
+    public final double tempCelsius;
     /**
      * Humidity %
      */
@@ -51,7 +51,7 @@ public class SensorData {
 
     private SensorData(final Builder builder) {
         this.instant = builder.instant;
-        this.tact = builder.tact;
+        this.tempCelsius = builder.tempCelsius;
         this.hact = builder.hact;
         this.pm25 = builder.pm25;
         this.pm10 = builder.pm10;
@@ -67,7 +67,7 @@ public class SensorData {
     public String toString() {
         return "SensorData{" +
             "instant=" + instant +
-            ", tact=" + tact +
+            ", tempCelsius=" + tempCelsius +
             ", hact=" + hact +
             ", pm25=" + pm25 +
             ", pm10=" + pm10 +
@@ -82,7 +82,7 @@ public class SensorData {
     public static class Builder {
 
         private Instant instant;
-        private int tact;
+        private double tempCelsius;
         private int hact;
         private int pm25;
         private int pm10;
@@ -92,16 +92,13 @@ public class SensorData {
         private int p10r;
         private boolean sltm;
 
-        public Builder withDate(final Instant instant
-        ) {
-            this.instant
-                = instant
-            ;
+        public Builder withDate(final Instant instant) {
+            this.instant = instant;
             return this;
         }
 
-        public Builder withTact(final int tact) {
-            this.tact = tact;
+        public Builder withTempCelsius(final double tempCelsius) {
+            this.tempCelsius = tempCelsius;
             return this;
         }
 

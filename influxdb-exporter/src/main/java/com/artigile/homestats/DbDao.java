@@ -73,7 +73,7 @@ public class DbDao {
                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .tag("serial", dysonDevice.deviceDescription.serial)
                 .tag("name", dysonDevice.deviceDescription.name)
-                .addField("tact", dysonDevice.dysonPureCoolData.currentSensorData.tact)
+                .addField("tempCelsius", dysonDevice.dysonPureCoolData.currentSensorData.tempCelsius)
                 .addField("hact", dysonDevice.dysonPureCoolData.currentSensorData.hact)
                 .addField("pm25", dysonDevice.dysonPureCoolData.currentSensorData.pm25)
                 .addField("pm10", dysonDevice.dysonPureCoolData.currentSensorData.pm10)
