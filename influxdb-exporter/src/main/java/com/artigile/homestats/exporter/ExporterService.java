@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class ExporterService {
     static final int PORT = Integer.parseInt(System.getProperty("port", "8086"));
     private static final Logger LOGGER = LoggerFactory.getLogger(ExporterService.class);
-    private final static long DB_POLL_INTERVAL = 1000 * 60;
+    private final static long DB_POLL_INTERVAL = 1000 * 60 * 5;
 
     public static void main(String[] args) throws ParseException {
         new ExporterService().start(args);

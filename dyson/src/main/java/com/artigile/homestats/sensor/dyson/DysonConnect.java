@@ -11,7 +11,6 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.http.HttpStatus;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,8 +42,8 @@ public class DysonConnect {
     private final String password;
 
     public DysonConnect(final String email, final String password) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(email),"Please provide email, email can't be empty");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(email),"Please provide password, password can't be empty");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(email), "Please provide email, email can't be empty");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(email), "Please provide password, password can't be empty");
         this.email = email;
         this.password = password;
     }
@@ -56,8 +55,8 @@ public class DysonConnect {
      * 1. Rest http(OAuth2.0): First it makes http OAuth2.0 Basic auth(credentials flow) call to dyson api{@link
      * #API_HOSTNAME} to get list
      * of registered online devices.
-     * 2. Multicast DNS: After list of devices received and list if not empty, this method will ask {@link
-     * MDnsDysonFinder} to look up
+     * 2. Multicast DNS(inside {@link DysonDataProvider}: After list of devices received and list if not empty, this
+     * method will ask {@link MDnsDysonFinder} to look up for available local devices.
      * {@link InetSocketAddress} for each device so that we can connect to it over MQTT in next step.
      * 3. MQTT: Established MQTT connection to devices and polls for a new data with provided pollInterval.
      *
@@ -66,7 +65,7 @@ public class DysonConnect {
      */
     final public ImmutableSet<DysonDataProvider> watchLocalDevices(final long pollInterval,
                                                                    final TimeUnit timeUnit) throws UnirestException,
-        IOException, MqttException {
+        IOException {
         final HttpResponse<JsonNode> loginResponse = Unirest.post(BASIC_AUTH_URL + REGION)
             .field(BASIC_AUTH_EMAIL, email)
             .field(BASIC_AUTH_PWD, password)
@@ -90,10 +89,9 @@ public class DysonConnect {
                 LOGGER.warn("No dyson device found for identifier: " + deviceIdentifier);
             } else if (deviceDescription.localCredentials != null) {
                 dataProvidersBuilder.add(
-                    new DysonDataProvider(deviceLocalAddress, deviceDescription, pollInterval, timeUnit));
+                    new DysonDataProvider(deviceDescription, pollInterval, timeUnit));
             }
         }
-
         return dataProvidersBuilder.build();
     }
 
@@ -152,8 +150,10 @@ public class DysonConnect {
 
         } catch (Exception e) {
             LOGGER.warn(
-                "device local credentials failed to be parsed. This device won't be connected to. LocalCredentials: "+localCredentials,e);
+                "device local credentials failed to be parsed. This device won't be connected to. LocalCredentials: " +
+                    localCredentials, e);
             return null;
         }
     }
+
 }

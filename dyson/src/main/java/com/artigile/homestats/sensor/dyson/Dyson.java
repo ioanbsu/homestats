@@ -18,7 +18,7 @@ public class Dyson {
     private final static Logger LOGGER = LoggerFactory.getLogger(MDnsDysonFinder.class);
 
     public static void main(
-        String[] args) throws UnirestException, IOException, MqttException {
+        String[] args) throws UnirestException, IOException {
         final String email = args[0];
         final String password = args[1];
 
@@ -32,6 +32,7 @@ public class Dyson {
                 }
             });
         });
+
 
     }
 }

@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -23,6 +24,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
 
 /**
  * Established MQTT listener connection to dyson purifier and asks for updates periodically.
@@ -36,54 +39,69 @@ public class DysonDataProvider implements MqttCallback {
     private DysonDevice.Builder dysonDeviceBuilder = new DysonDevice.Builder();
     private MqttClient client;
     private Consumer<DysonDevice> dysonPureCoolDataConsumer;
-
-    private final static SecureRandom random = new SecureRandom();
+    private final DeviceDescription deviceDescription;
+    private final static SecureRandom mqttClientSessionIdRandomizer = new SecureRandom();
 
     /**
      * Establishes connection to dyson devices ans periodically sends signal to it to force an updated mqtt message
      * about status to be broadcasted.
      * Listens to this message in {@link #messageArrived(String, MqttMessage)}.
      *
-     * @param device device socket address
      * @param deviceDescription product type (used to build mqtt topic URIs).
-     * @throws MqttException thrown in case something wrong happens in mqtt communication.
+     * @param pollInterval interval for how often to attempt to check for updates from devices.
+     * @param timeUnit the time unit used for poll interval.
      */
-    public DysonDataProvider(final InetSocketAddress device,
-                             final DeviceDescription deviceDescription, long pollInterval,
-                             TimeUnit timeUnit) throws MqttException {
-
+    public DysonDataProvider(final DeviceDescription deviceDescription, final long pollInterval,
+                             final TimeUnit timeUnit) {
+        this.deviceDescription = deviceDescription;
         dysonDeviceBuilder.withDeviceDescription(deviceDescription);
-        initiateNewMqttConnection(device, deviceDescription);
+        final String askForUpdatesTopic = String.format("%s/%s/command", deviceDescription.productType,
+            deviceDescription.localCredentials.serial);
+        final String deviceIdentifier = deviceDescription.productType + "_" + deviceDescription.serial;
         EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            if (client == null) {
+                LOGGER.info("Not connecting to dyson device, establishing connection {}", deviceDescription);
+                try {
+                    initiateNewMqttConnection(MDnsDysonFinder.getDeviceById(deviceIdentifier, 5, TimeUnit.SECONDS));
+                } catch (MqttException | IOException e) {
+                    LOGGER.warn("Failed to connect to dyson device. Will retry later. Device {}", deviceDescription);
+                }
+            }
             final String payload = "{\"msg\":\"REQUEST-CURRENT-STATE\",\"time\":\"" + Instant.now() + "\"}";
             LOGGER.debug("SendingSending CMD: {}", payload);
             try {
                 if (!client.isConnected()) {
                     client.close(true);
                     LOGGER.info("Connection lost to dyson {}. \n\tReconnecting... ", deviceDescription);
-                    initiateNewMqttConnection(device, deviceDescription);
+                    initiateNewMqttConnection(MDnsDysonFinder.getDeviceById(deviceIdentifier, 5, TimeUnit.SECONDS));
                 }
-                client.publish(
-                    deviceDescription.productType + "/" + deviceDescription.localCredentials.serial + "/command",
-                    new MqttMessage((payload).getBytes()));
-            } catch (MqttException e) {
-                e.printStackTrace();
+                client.publish(askForUpdatesTopic, new MqttMessage((payload).getBytes()));
+            } catch (MqttException | IOException mqttException) {
+                LOGGER.error(
+                    "Can't connect to mqtt client. Resolving new local device address. Will try to reconnect later.",
+                    mqttException);
             }
         }, 0, pollInterval, timeUnit);
     }
 
-    private void initiateNewMqttConnection(InetSocketAddress device,
-                                           DeviceDescription deviceDescription) throws MqttException {
-        final String host = String.format("tcp://%s:%d", device.getHostName(), device.getPort());
+    private void initiateNewMqttConnection(@Nullable final InetSocketAddress deviceLocalAddress) throws MqttException {
+        if (deviceLocalAddress == null) {
+            LOGGER.warn("Provided device address was null, skipping connection for {}", deviceDescription);
+            return;
+        }
+        final String host = String.format("tcp://%s:%d", deviceLocalAddress.getHostName(),
+            deviceLocalAddress.getPort());
         final String username = deviceDescription.localCredentials.serial;
         final String topic = deviceDescription.productType + "/" + username + "/status/current";
 
         final MqttConnectOptions conOpt = new MqttConnectOptions();
         conOpt.setCleanSession(true);
         conOpt.setUserName(username);
+        conOpt.setKeepAliveInterval(10);
         conOpt.setPassword(deviceDescription.localCredentials.passwordHash.toCharArray());
 
-        this.client = new MqttClient(host, "JavaDysonListener_" + random.nextInt(1000), new MemoryPersistence());
+        this.client = new MqttClient(host, "JavaDysonListener_" + mqttClientSessionIdRandomizer.nextInt(1000),
+            new MemoryPersistence());
         this.client.setCallback(this);
         this.client.connect(conOpt);
         this.client.subscribe(topic, QOS);

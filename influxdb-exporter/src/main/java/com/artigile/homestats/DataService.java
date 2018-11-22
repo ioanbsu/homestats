@@ -37,7 +37,7 @@ public class DataService implements Runnable {
                 dysonConnect.watchLocalDevices(period, TimeUnit.MILLISECONDS).forEach(
                     dysonDataProvider -> dysonDataProvider.registerDataConsumer(dbDao::saveDysonData)
                 );
-            } catch (IOException | UnirestException | MqttException e) {
+            } catch (IOException | UnirestException e) {
                 LOGGER.error("Failed to establish communication to dyson device.", e);
                 e.printStackTrace();
             }
