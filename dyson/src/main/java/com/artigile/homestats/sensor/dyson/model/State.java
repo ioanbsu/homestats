@@ -6,7 +6,6 @@ public class State {
     public static final String KEY = "CURRENT-STATE";
     public final Instant instant;
     public final String modeReason;
-    public final boolean dial;
     public final int rssi;
     public final int channel;
     public final ProductState productState;
@@ -16,7 +15,6 @@ public class State {
             = builder.instant
         ;
         this.modeReason = builder.modeReason;
-        this.dial = builder.dial;
         this.rssi = builder.rssi;
         this.channel = builder.channel;
         this.productState = builder.productState;
@@ -25,7 +23,6 @@ public class State {
     public static class Builder {
         private Instant instant;
         private String modeReason;
-        private boolean dial;
         private int rssi;
         private int channel;
         private ProductState productState;
@@ -40,11 +37,6 @@ public class State {
 
         public Builder withModeReason(final String modereason) {
             this.modeReason = modereason;
-            return this;
-        }
-
-        public Builder withDial(final boolean dial) {
-            this.dial = dial;
             return this;
         }
 

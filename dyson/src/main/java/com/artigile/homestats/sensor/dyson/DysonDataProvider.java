@@ -125,11 +125,11 @@ public class DysonDataProvider implements MqttCallback {
         try {
             final JSONObject jsonMsg = new JSONObject(new String(message.getPayload()));
             if (jsonMsg.getString("msg").equals(State.KEY)) {
+                LOGGER.info("Received json: {}", jsonMsg.toString());
                 final State.Builder stateBuilder = new State.Builder()
                     .withProductState(parseProductState(jsonMsg.getJSONObject("product-state")))
                     .withChannel(jsonMsg.getInt("channel"))
                     .withDate(Instant.parse(jsonMsg.getString("time")))
-                    .withDial(parseBoolean(jsonMsg, "dial"))
                     .withRssi(jsonMsg.getInt("rssi"));
                 dysonPureCoolDataBuilder.withCurrentState(stateBuilder.build());
             } else if (jsonMsg.getString("msg").equals(SensorData.KEY)) {

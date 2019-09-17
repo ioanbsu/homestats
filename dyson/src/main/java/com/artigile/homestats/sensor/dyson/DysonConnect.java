@@ -83,7 +83,7 @@ public class DysonConnect {
         for (DeviceDescription deviceDescription : registeredDevices) {
             final String deviceIdentifier =
                 deviceDescription.productType + "_" + deviceDescription.serial;
-            final InetSocketAddress deviceLocalAddress = MDnsDysonFinder.getDeviceById(deviceIdentifier, 5,
+            final InetSocketAddress deviceLocalAddress = MDnsDysonFinder.getDeviceById(deviceIdentifier, 25,
                 TimeUnit.SECONDS);
             if (deviceLocalAddress == null) {
                 LOGGER.warn("No dyson device found for identifier: " + deviceIdentifier);
