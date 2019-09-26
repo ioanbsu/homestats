@@ -17,7 +17,7 @@
     <appender name="allLogsFile" class="ch.qos.logback.core.FileAppender">
         <file>/var/log/app/vestibule/vestibule.log</file>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <param name="level" value="INFO"/>

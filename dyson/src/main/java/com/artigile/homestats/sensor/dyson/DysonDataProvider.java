@@ -32,24 +32,23 @@ import javax.annotation.Nullable;
  */
 public class DysonDataProvider implements MqttCallback {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MDnsDysonFinder.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DysonDataProvider.class);
     private final static int QOS = 1;
     private final static ScheduledExecutorService EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
+    private final static SecureRandom mqttClientSessionIdRandomizer = new SecureRandom();
+    private final DeviceDescription deviceDescription;
     private DysonPureCoolData.Builder dysonPureCoolDataBuilder = new DysonPureCoolData.Builder();
     private DysonDevice.Builder dysonDeviceBuilder = new DysonDevice.Builder();
     private MqttClient client;
     private Consumer<DysonDevice> dysonPureCoolDataConsumer;
-    private final DeviceDescription deviceDescription;
-    private final static SecureRandom mqttClientSessionIdRandomizer = new SecureRandom();
 
     /**
      * Establishes connection to dyson devices ans periodically sends signal to it to force an updated mqtt message
-     * about status to be broadcasted.
-     * Listens to this message in {@link #messageArrived(String, MqttMessage)}.
+     * about status to be broadcasted. Listens to this message in {@link #messageArrived(String, MqttMessage)}.
      *
      * @param deviceDescription product type (used to build mqtt topic URIs).
-     * @param pollInterval interval for how often to attempt to check for updates from devices.
-     * @param timeUnit the time unit used for poll interval.
+     * @param pollInterval      interval for how often to attempt to check for updates from devices.
+     * @param timeUnit          the time unit used for poll interval.
      */
     public DysonDataProvider(final DeviceDescription deviceDescription, final long pollInterval,
                              final TimeUnit timeUnit) {
@@ -100,12 +99,15 @@ public class DysonDataProvider implements MqttCallback {
         conOpt.setKeepAliveInterval(10);
         conOpt.setPassword(deviceDescription.localCredentials.passwordHash.toCharArray());
 
-        this.client = new MqttClient(host, "JavaDysonListener_" + mqttClientSessionIdRandomizer.nextInt(1000),
-            new MemoryPersistence());
+        this.client = new MqttClient(host, getOrGenerateClientId(), new MemoryPersistence());
         this.client.setCallback(this);
         this.client.connect(conOpt);
         this.client.subscribe(topic, QOS);
         this.client.setTimeToWait(1000);
+    }
+
+    private synchronized String getOrGenerateClientId() {
+        return "JavaDysonListener_" + mqttClientSessionIdRandomizer.nextInt(1000);
     }
 
     @Override
